@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Exec(mv)",
+      "Exec(npx tsc)",
+      "Exec(npx convex)",
+      "Exec(npm install)",
+      "Exec(del)",
+      "Exec(npm run)",
+      "Exec(ls components)",
+      "Exec(ls)",
+      "Exec(Get-Content)"
+    ]
+  }
+}

@@ -1,0 +1,552 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Loader2, Plus } from "lucide-react";
+import { InvoiceRow } from "./columns";
+import {
+  generateInvoiceNumberAction,
+  createInvoiceAction,
+  updateInvoiceAction,
+} from "@/app/actions/documents";
+import { toast } from "sonner";
+import { FormWizard } from "@/components/admin/forms/FormWizard";
+import { LineItemsInput } from "@/components/admin/forms/LineItemsInput";
+import { InlineClientCreator } from "@/components/admin/forms/InlineClientCreator";
+import { InvoicePreview } from "./InvoicePreview";
+
+interface InvoiceFormSheetProps {
+  invoice?: InvoiceRow | null;
+  clients: any[];
+  services: any[];
+  quotations: any[];
+  templates: any[];
+  open: boolean;
+  onClose: () => void;
+  isCreating?: boolean;
+}
+
+interface LineItem {
+  serviceId?: string;
+  description: string;
+  quantity: number;
+  unitPrice: string;
+  total: string;
+}
+
+export function InvoiceFormSheet({
+  invoice,
+  clients,
+  services,
+  quotations,
+  templates,
+  open,
+  onClose,
+  isCreating,
+}: InvoiceFormSheetProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingNumber, setIsGeneratingNumber] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showPreview, setShowPreview] = useState(false);
+  const [localClients, setLocalClients] = useState(clients);
+  const [localServices, setLocalServices] = useState(services);
+  const [formData, setFormData] = useState({
+    invoiceNumber: "",
+    clientId: "" as string,
+    quotationId: "" as string,
+    invoiceDate: new Date().toISOString().split('T')[0],
+    dueDate: "",
+    status: "draft" as "draft" | "sent" | "paid" | "overdue" | "cancelled",
+    items: [] as LineItem[],
+    taxRate: 0,
+    discountAmount: "0",
+    notes: "",
+    terms: "",
+    templateId: "" as string,
+  });
+
+  useEffect(() => {
+    if (invoice && !isCreating) {
+      setFormData({
+        invoiceNumber: invoice.invoiceNumber,
+        clientId: invoice.clientId,
+        quotationId: invoice.quotationId ?? "",
+        invoiceDate: new Date(invoice.invoiceDate).toISOString().split('T')[0],
+        dueDate: invoice.dueDate ? new Date(invoice.dueDate).toISOString().split('T')[0] : "",
+        status: invoice.status,
+        items: invoice.items as LineItem[],
+        taxRate: invoice.taxRate || 0,
+        discountAmount: invoice.discountAmount || "0",
+        notes: invoice.notes ?? "",
+        terms: invoice.terms ?? "",
+        templateId: invoice.templateId ?? "",
+      });
+    } else {
+      setFormData({
+        invoiceNumber: "",
+        clientId: "",
+        quotationId: "",
+        invoiceDate: new Date().toISOString().split('T')[0],
+        dueDate: "",
+        status: "draft",
+        items: [],
+        taxRate: 0,
+        discountAmount: "0",
+        notes: "",
+        terms: "",
+        templateId: "",
+      });
+    }
+    setCurrentStep(0);
+    setShowPreview(false);
+    setLocalClients(clients);
+    setLocalServices(services);
+  }, [invoice, isCreating, open, clients, services]);
+
+  const generateNumber = async () => {
+    setIsGeneratingNumber(true);
+    try {
+      const result = await generateInvoiceNumberAction();
+      if (result.success && result.number) {
+        setFormData({ ...formData, invoiceNumber: result.number });
+      }
+    } catch (error) {
+      toast.error("Failed to generate invoice number");
+    } finally {
+      setIsGeneratingNumber(false);
+    }
+  };
+
+  const loadFromQuotation = async (quotationId: string | null) => {
+    if (!quotationId) return;
+    const quotation = quotations.find(q => q._id === quotationId);
+    if (quotation) {
+      setFormData({
+        ...formData,
+        clientId: quotation.clientId,
+        items: quotation.items,
+        terms: quotation.terms ?? "",
+      });
+    }
+  };
+
+  const calculateTotals = () => {
+    const subtotal = formData.items.reduce((sum, item) => sum + parseFloat(item.total || "0"), 0);
+    const taxAmount = (subtotal * (formData.taxRate / 100)).toFixed(2);
+    const discount = parseFloat(formData.discountAmount) || 0;
+    const total = (subtotal + parseFloat(taxAmount) - discount).toFixed(2);
+    return {
+      subtotal: subtotal.toFixed(2),
+      taxAmount,
+      total,
+    };
+  };
+
+  const handleSubmit = async () => {
+    setIsLoading(true);
+
+    try {
+      const totals = calculateTotals();
+      const submitData = {
+        ...formData,
+        clientId: formData.clientId as any,
+        quotationId: formData.quotationId || undefined,
+        invoiceDate: new Date(formData.invoiceDate).getTime(),
+        dueDate: formData.dueDate ? new Date(formData.dueDate).getTime() : undefined,
+        templateId: formData.templateId || undefined,
+        ...totals,
+      };
+
+      if (isCreating) {
+        const result = await createInvoiceAction(submitData);
+        if (result.error) {
+          toast.error(result.error);
+        } else {
+          toast.success("Invoice created successfully");
+          onClose();
+        }
+      } else if (invoice) {
+        const result = await updateInvoiceAction(invoice._id, submitData);
+        if (result.error) {
+          toast.error(result.error);
+        } else {
+          toast.success("Invoice updated successfully");
+          onClose();
+        }
+      }
+    } catch (error) {
+      toast.error("An error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const totals = calculateTotals();
+
+  const canProceedFromStep1 = () => {
+    return !!formData.invoiceNumber && !!formData.clientId && !!formData.invoiceDate;
+  };
+
+  const canProceedFromStep2 = () => {
+    return formData.items.length > 0;
+  };
+
+  const handleNext = () => {
+    if (currentStep === 2) {
+      setShowPreview(true);
+    } else {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (showPreview) {
+      setShowPreview(false);
+    } else {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const currentStepCanNext = () => {
+    if (currentStep === 0) return canProceedFromStep1();
+    if (currentStep === 1) return canProceedFromStep2();
+    if (currentStep === 2) return true;
+    return false;
+  };
+
+  const previewInvoice = {
+    ...formData,
+    ...totals,
+    subtotal: totals.subtotal,
+    taxAmount: totals.taxAmount,
+    total: totals.total,
+    client: localClients.find(c => c._id === formData.clientId),
+  };
+
+  return (
+    <>
+      <Sheet open={open} onOpenChange={onClose}>
+        <SheetContent side="right" className="overflow-y-auto  max-w-[90vw] md:!max-w-[50%] w-[80%] md:!w-1/2">
+          <SheetHeader className="mb-6">
+            <SheetTitle>
+              {isCreating ? "Create New Invoice" : "Edit Invoice"}
+            </SheetTitle>
+            <SheetDescription>
+              {isCreating
+                ? "Create a new invoice for a client."
+                : "Update the invoice details."}
+            </SheetDescription>
+          </SheetHeader>
+
+          <FormWizard
+            currentStep={currentStep}
+            totalSteps={3}
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            onSubmit={handleSubmit}
+            isLastStep={currentStep === 2 && !showPreview}
+            canNext={currentStepCanNext()}
+            isLoading={isLoading}
+          >
+            {/* Step 1: Basic Information */}
+            {currentStep === 0 && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="invoiceNumber" className="text-[10px]">Invoice Number *</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="invoiceNumber"
+                        value={formData.invoiceNumber}
+                        onChange={(e) =>
+                          setFormData({ ...formData, invoiceNumber: e.target.value })
+                        }
+                        required
+                        className="h-7 text-xs"
+                      />
+                      {isCreating && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={generateNumber}
+                          disabled={isGeneratingNumber}
+                          className="h-7 w-7"
+                        >
+                          {isGeneratingNumber ? (
+                            <Loader2 className="size-2.5 animate-spin" />
+                          ) : (
+                            <Plus className="size-2.5" />
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="status" className="text-[10px]">Status</Label>
+                    <Select
+                      value={formData.status}
+                      onValueChange={(value: any) =>
+                        setFormData({ ...formData, status: value })
+                      }
+                    >
+                      <SelectTrigger className="h-7 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="sent">Sent</SelectItem>
+                        <SelectItem value="paid">Paid</SelectItem>
+                        <SelectItem value="overdue">Overdue</SelectItem>
+                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="clientId" className="text-[10px]">Client *</Label>
+                  <div className="flex gap-2">
+                    <Select
+                      value={formData.clientId}
+                      onValueChange={(value) =>
+                        value && setFormData({ ...formData, clientId: value })
+                      }
+                    >
+                      <SelectTrigger className="h-7 text-xs">
+                        <SelectValue placeholder="Select a client" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {localClients.map((client) => (
+                          <SelectItem key={client._id} value={client._id}>
+                            {client.name} {client.companyName && `(${client.companyName})`}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <InlineClientCreator
+                      onClientCreated={(client) => {
+                        setLocalClients([...localClients, client]);
+                        setFormData({ ...formData, clientId: client._id });
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="quotationId" className="text-[10px]">From Quotation (Optional)</Label>
+                  <Select
+                    value={formData.quotationId ?? ""}
+                    onValueChange={(value) => {
+                      setFormData({ ...formData, quotationId: value || "" });
+                      if (value) loadFromQuotation(value);
+                    }}
+                  >
+                    <SelectTrigger className="h-7 text-xs">
+                      <SelectValue placeholder="Select a quotation" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">None</SelectItem>
+                      {quotations.map((quotation) => (
+                        <SelectItem key={quotation._id} value={quotation._id}>
+                          {quotation.quotationNumber} - {quotation.client?.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="invoiceDate" className="text-[10px]">Invoice Date *</Label>
+                    <Input
+                      id="invoiceDate"
+                      type="date"
+                      value={formData.invoiceDate}
+                      onChange={(e) =>
+                        setFormData({ ...formData, invoiceDate: e.target.value })
+                      }
+                      required
+                      className="h-7 text-xs"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="dueDate" className="text-[10px]">Due Date</Label>
+                    <Input
+                      id="dueDate"
+                      type="date"
+                      value={formData.dueDate}
+                      onChange={(e) =>
+                        setFormData({ ...formData, dueDate: e.target.value })
+                      }
+                      className="h-7 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="templateId" className="text-[10px]">Invoice Template</Label>
+                    <Select
+                      value={formData.templateId ?? ""}
+                      onValueChange={(value) =>
+                        setFormData({ ...formData, templateId: value || "" })
+                      }
+                    >
+                      <SelectTrigger className="h-7 text-xs">
+                        <SelectValue placeholder="Select template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Default</SelectItem>
+                        {templates.map((template) => (
+                          <SelectItem key={template._id} value={template._id}>
+                            {template.name} ({template.style})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="taxRate" className="text-[10px]">Tax Rate (%)</Label>
+                    <Input
+                      id="taxRate"
+                      type="number"
+                      value={formData.taxRate}
+                      onChange={(e) =>
+                        setFormData({ ...formData, taxRate: parseFloat(e.target.value) || 0 })
+                      }
+                      min="0"
+                      step="0.1"
+                      className="h-7 text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 2: Line Items */}
+            {currentStep === 1 && (
+              <div className="space-y-5">
+                <LineItemsInput
+                  items={formData.items}
+                  onChange={(items) => setFormData({ ...formData, items })}
+                  services={localServices}
+                  onServiceCreated={(service) => {
+                    setLocalServices([...localServices, service]);
+                  }}
+                />
+
+                {/* Totals */}
+                <div className="grid grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
+                  <div>
+                    <Label className="text-[10px]">Subtotal</Label>
+                    <p className="text-base font-bold">${totals.subtotal}</p>
+                  </div>
+                  <div>
+                    <Label className="text-[10px]">Tax ({formData.taxRate}%)</Label>
+                    <p className="text-base font-bold">${totals.taxAmount}</p>
+                  </div>
+                  <div>
+                    <Label className="text-[10px]">Discount</Label>
+                    <Input
+                      type="number"
+                      value={formData.discountAmount}
+                      onChange={(e) =>
+                        setFormData({ ...formData, discountAmount: e.target.value })
+                      }
+                      min="0"
+                      step="0.01"
+                      className="h-7 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-[10px]">Total</Label>
+                    <p className="text-lg font-bold">${totals.total}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Notes & Terms */}
+            {currentStep === 2 && (
+              <div className="space-y-5">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="notes" className="text-[10px]">Notes</Label>
+                    <Textarea
+                      id="notes"
+                      value={formData.notes}
+                      onChange={(e) =>
+                        setFormData({ ...formData, notes: e.target.value })
+                      }
+                      rows={4}
+                      className="text-xs resize-none"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="terms" className="text-[10px]">Terms</Label>
+                    <Textarea
+                      id="terms"
+                      value={formData.terms}
+                      onChange={(e) =>
+                        setFormData({ ...formData, terms: e.target.value })
+                      }
+                      rows={4}
+                      className="text-xs resize-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-4 bg-muted rounded-lg">
+                  <h3 className="font-semibold mb-2 text-xs">Invoice Summary</h3>
+                  <div className="space-y-2 text-[10px]">
+                    <div className="flex justify-between">
+                      <span>Invoice Number:</span>
+                      <span className="font-medium">{formData.invoiceNumber}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Client:</span>
+                      <span className="font-medium">
+                        {clients.find(c => c._id === formData.clientId)?.name}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Total Amount:</span>
+                      <span className="font-bold">${totals.total}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </FormWizard>
+        </SheetContent>
+      </Sheet>
+
+      {/* Preview Dialog */}
+      <InvoicePreview
+        invoice={previewInvoice as any}
+        clients={clients}
+        templates={templates}
+        open={showPreview}
+        onClose={() => setShowPreview(false)}
+      />
+    </>
+  );
+}
