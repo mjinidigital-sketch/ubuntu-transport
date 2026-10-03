@@ -11,7 +11,8 @@ import { useTransition, useMemo, memo, useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
-import { getNavbarPages } from "@/app/actions/navbar";
+import { getNavbarPages, getOrganizationSettings } from "@/app/actions/navbar";
+import { TopBar } from "@/components/TopBar";
 
 import {
   Accordion,
@@ -322,6 +323,7 @@ const Navbar1Component = ({
 }: Navbar1Props) => {
   const [pages, setPages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [orgSettings, setOrgSettings] = useState<any>(null);
   const pathname = usePathname();
 
   // Fetch pages from server action on mount
@@ -338,6 +340,31 @@ const Navbar1Component = ({
     }
     loadPages();
   }, []);
+
+  // Fetch organization settings on mount
+  useEffect(() => {
+    async function loadOrgSettings() {
+      try {
+        const org = await getOrganizationSettings();
+        setOrgSettings(org);
+      } catch (error) {
+        console.error("Failed to load organization settings:", error);
+      }
+    }
+    loadOrgSettings();
+  }, []);
+
+  // Use organization settings for contact info
+  const email = orgSettings?.emailEnabled ? orgSettings?.email || "support@example.com" : "support@example.com";
+  const phone = orgSettings?.phoneEnabled ? orgSettings?.phone || "+1 (555) 123-4567" : "+1 (555) 123-4567";
+  const address = orgSettings?.addressEnabled ? orgSettings?.address || "123 Main St, City, State 12345" : "123 Main St, City, State 12345";
+  const socials = {
+    facebook: orgSettings?.facebookEnabled ? orgSettings?.facebook : undefined,
+    twitter: orgSettings?.twitterEnabled ? orgSettings?.twitter : undefined,
+    instagram: orgSettings?.instagramEnabled ? orgSettings?.instagram : undefined,
+    linkedin: orgSettings?.linkedinEnabled ? orgSettings?.linkedin : undefined,
+    youtube: orgSettings?.youtubeEnabled ? orgSettings?.youtube : undefined,
+  };
 
   // Convert pages to menu format (simplified - no icons for main links)
   const dynamicMenu = useMemo(() => {
@@ -431,12 +458,16 @@ const Navbar1Component = ({
     );
   }, [pathname]);
   return (
-    <section className={cn("py-1 border-b dark:border-primary/20", className)}>
-      <div className="container justify-around">
+  <>
+
+    <TopBar email={email} phone={phone} address={address} socials={socials} />
+
+    <section className={cn("py-2 border-b dark:border-primary/20", className)}>
+      <div className="px-4 md:px-8 lg:px-12 mx-auto">
 
         {/* Desktop Menu */}
         {/* Desktop Menu */}
-        <nav className="hidden lg:grid lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:gap-6">
+        <nav className="hidden lg:flex lg:items-center lg:justify-between lg:gap-6 w-full">
           {/* Left — Logo */}
           <div className="flex items-center justify-start p-1 rounded-full bg-white/80 w-fit">
             <Link
@@ -458,7 +489,7 @@ const Navbar1Component = ({
           </div>
 
           {/* Center — Navigation */}
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center flex-1">
             <NavigationMenu className="">
               <NavigationMenuList className="gap-1">
                 {dynamicMenu.map((item) => (
@@ -598,12 +629,16 @@ const Navbar1Component = ({
                   {/* Mobile Auth */}
                   <Unauthenticated>
                     <div className="flex flex-col gap-3">
-                      <Button variant="outline">
-                        <Link href={auth.login.url}>{auth.login.title}</Link>
-                      </Button>
-                      <Button >
-                        <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                      </Button>
+                      <Link href={auth.login.url}>
+                        <Button variant="outline" className="w-full">
+                          {auth.login.title}
+                        </Button>
+                      </Link>
+                      <Link href={auth.signup.url}>
+                        <Button className="w-full">
+                          {auth.signup.title}
+                        </Button>
+                      </Link>
                     </div>
                   </Unauthenticated>
                   <Authenticated>
@@ -617,6 +652,7 @@ const Navbar1Component = ({
 
       </div>
     </section>
+  </>
   );
 };
 
