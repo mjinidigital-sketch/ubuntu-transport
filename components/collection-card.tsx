@@ -51,7 +51,6 @@ interface CollectionCardProps {
     icon?: string;
     tags?: string[];
     metadata?: {
-      price?: string;
       duration?: string;
       client?: string;
       projectDate?: string;

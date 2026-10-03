@@ -64,7 +64,6 @@ export interface ItemFormData {
     order: number;
   }>;
   metadata: {
-    price?: string;
     duration?: string;
     features: string[];
     client?: string;
@@ -524,29 +523,12 @@ export function ItemFormSheet({
                 </span>
               </div>
 
-              {/* 1. Pricing & Timeline */}
+              {/* 1. Timeline */}
               <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-5">
                 <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-emerald-500" /> Pricing &amp; Timeline
+                  <Clock className="w-4 h-4 text-emerald-500" /> Timeline
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-price" className="text-xs font-semibold text-foreground">
-                      Price / Cost
-                    </Label>
-                    <Input
-                      id="meta-price"
-                      placeholder="e.g., $99/mo, Free, Starting at $5,000"
-                      value={formData.metadata.price || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, price: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-medium"
-                    />
-                  </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="meta-duration" className="text-xs font-semibold text-foreground">
                       Duration / Turnaround

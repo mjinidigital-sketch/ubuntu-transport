@@ -51,10 +51,11 @@ export function SortableBlockWrapper({ id, children, onSelect, isActive, onDelet
         >
           <GripVertical className="w-4 h-4 text-gray-500" />
         </div>
-        
+
         {/* Edit Button */}
         {onEdit && (
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onEdit();
@@ -69,6 +70,7 @@ export function SortableBlockWrapper({ id, children, onSelect, isActive, onDelet
         {/* Delete Button */}
         {onDelete && (
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onDelete();

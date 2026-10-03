@@ -41,8 +41,6 @@ export function ServiceDialog({ service, open, onClose, isCreating }: ServiceDia
     const [formData, setFormData] = useState({
         name: "",
         description: "",
-        price: "",
-        pricingType: "hourly" as "hourly" | "project" | "per_item" | "subscription",
         category: "",
         duration: "",
         features: [] as string[],
@@ -57,8 +55,6 @@ export function ServiceDialog({ service, open, onClose, isCreating }: ServiceDia
             setFormData({
                 name: service.name,
                 description: service.description || "",
-                price: service.price,
-                pricingType: service.pricingType,
                 category: service.category || "",
                 duration: service.duration || "",
                 features: service.features || [],
@@ -71,8 +67,6 @@ export function ServiceDialog({ service, open, onClose, isCreating }: ServiceDia
             setFormData({
                 name: "",
                 description: "",
-                price: "",
-                pricingType: "hourly",
                 category: "",
                 duration: "",
                 features: [],
@@ -139,40 +133,6 @@ export function ServiceDialog({ service, open, onClose, isCreating }: ServiceDia
                                     }
                                     required
                                 />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="price">Price *</Label>
-                                <Input
-                                    id="price"
-                                    value={formData.price}
-                                    onChange={(e) =>
-                                        setFormData({ ...formData, price: e.target.value })
-                                    }
-                                    placeholder="e.g., $100"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="pricingType">Pricing Type *</Label>
-                                <Select
-                                    value={formData.pricingType}
-                                    onValueChange={(value: any) =>
-                                        setFormData({ ...formData, pricingType: value })
-                                    }
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="hourly">Hourly</SelectItem>
-                                        <SelectItem value="project">Project</SelectItem>
-                                        <SelectItem value="per_item">Per Item</SelectItem>
-                                        <SelectItem value="subscription">Subscription</SelectItem>
-                                    </SelectContent>
-                                </Select>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="category">Category</Label>

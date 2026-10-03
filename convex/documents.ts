@@ -48,13 +48,6 @@ export const createService = mutation({
     args: {
         name: v.string(),
         description: v.optional(v.string()),
-        price: v.string(),
-        pricingType: v.union(
-            v.literal("hourly"),
-            v.literal("project"),
-            v.literal("per_item"),
-            v.literal("subscription")
-        ),
         category: v.optional(v.string()),
         duration: v.optional(v.string()),
         features: v.optional(v.array(v.string())),
@@ -89,13 +82,6 @@ export const updateService = mutation({
         id: v.id("services"),
         name: v.optional(v.string()),
         description: v.optional(v.string()),
-        price: v.optional(v.string()),
-        pricingType: v.optional(v.union(
-            v.literal("hourly"),
-            v.literal("project"),
-            v.literal("per_item"),
-            v.literal("subscription")
-        )),
         category: v.optional(v.string()),
         duration: v.optional(v.string()),
         features: v.optional(v.array(v.string())),

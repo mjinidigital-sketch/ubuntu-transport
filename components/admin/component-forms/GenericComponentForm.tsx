@@ -37,6 +37,23 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
+// Instant debounce for text inputs (faster response)
+function useInstantDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = React.useState<T>(value);
+
+  React.useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+}
+
 export function GenericComponentForm({ 
   blockType, 
   componentPath, 
@@ -53,17 +70,18 @@ export function GenericComponentForm({
     setLocalProps(props);
   }, [props]);
 
-  // Debounced local props for external updates
+  // Use instant debounce for text fields (150ms) and regular for others (500ms)
   const debouncedLocalProps = useDebounce(localProps, 500);
+  const instantDebouncedLocalProps = useInstantDebounce(localProps, 150);
 
   // Sync debounced changes to external props
   React.useEffect(() => {
-    Object.keys(debouncedLocalProps).forEach(key => {
-      if (debouncedLocalProps[key] !== props[key]) {
-        onChange(key, debouncedLocalProps[key]);
+    Object.keys(instantDebouncedLocalProps).forEach(key => {
+      if (instantDebouncedLocalProps[key] !== props[key]) {
+        onChange(key, instantDebouncedLocalProps[key]);
       }
     });
-  }, [debouncedLocalProps, props, onChange]);
+  }, [instantDebouncedLocalProps, props, onChange]);
 
   const config = getBlockConfig(blockType);
   const variantConfig = config?.variants?.find(v => v.id === props.variant);

@@ -6,6 +6,13 @@ import { FeaturesBlock } from "./blocks/FeaturesBlock";
 import { BlogBlock } from "./blocks/BlogBlock";
 import { CareerBlock } from "./blocks/CareerBlock";
 import { CardBlock } from "./blocks/CardBlock";
+import { CollectionCardsBlockWrapper } from "./blocks/CollectionCardsBlockWrapper";
+import { ServicesBlock } from "./blocks/ServicesBlock";
+import { ProjectsBlock } from "./blocks/ProjectsBlock";
+import { TeamBlock } from "./blocks/TeamBlock";
+import { ProductsBlock } from "./blocks/ProductsBlock";
+import { FleetBlock } from "./blocks/FleetBlock";
+import { DestinationsBlock } from "./blocks/DestinationsBlock";
 import { FormBlock } from "./blocks/FormBlock";
 import { ContactBlock } from "./blocks/ContactBlock";
 import { BookingBlock } from "./blocks/BookingBlock";
@@ -23,6 +30,13 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<any>> = {
   BlogBlock,
   CareerBlock,
   CardBlock,
+  CollectionCardsBlock: CollectionCardsBlockWrapper,
+  ServicesBlock,
+  ProjectsBlock,
+  TeamBlock,
+  ProductsBlock,
+  FleetBlock,
+  DestinationsBlock,
   FormBlock,
   ContactBlock,
   BookingBlock,

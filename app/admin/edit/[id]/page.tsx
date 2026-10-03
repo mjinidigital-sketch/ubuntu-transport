@@ -47,6 +47,9 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
   const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
   const router = useRouter();
 
+  // Local state for active block props (moved here to be available before blocks is used)
+  const [localActiveProps, setLocalActiveProps] = useState<Record<string, any>>({});
+
   // Local state for page title and slug with debounced updates
   const [localPageData, setLocalPageData] = useState({
     title: page?.title || "",
@@ -79,6 +82,8 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
       handlePageUpdate('slug', debouncedPageData.slug);
     }
   }, [debouncedPageData]);
+
+
 
   // SEO state
   const [seoData, setSeoData] = useState({
@@ -146,12 +151,38 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
     }
   }, [page]);
 
-  if (!pageId || !page) return <div className="p-8 text-center text-gray-500">Loading UI CMS Workspace Container Engine...</div>;
-
-  if (!page) return <div className="p-8 text-center text-gray-500">Loading UI CMS Workspace Container Engine...</div>;
-
-  const blocks = page.blocks;
+  const blocks = page?.blocks || [];
   const activeBlock = blocks.find((b) => b.id === activeId);
+
+  // Sync local active props when active block changes
+  React.useEffect(() => {
+    if (activeId) {
+      const activeBlock = blocks.find(b => b.id === activeId);
+      if (activeBlock) {
+        setLocalActiveProps(activeBlock.props);
+      }
+    } else {
+      setLocalActiveProps({});
+    }
+  }, [activeId, blocks]);
+
+  // Debounced save for active props
+  React.useEffect(() => {
+    if (!activeId || !pageId) return;
+
+    const handler = setTimeout(() => {
+      const modified = blocks.map((b) =>
+        b.id === activeId ? { ...b, props: { ...b.props, ...localActiveProps } } : b
+      );
+      updateBlocks({ id: pageId, blocks: modified });
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [localActiveProps, activeId, pageId, blocks, updateBlocks]);
+
+  if (!pageId || !page) return <div className="p-8 text-center text-gray-500">Loading UI CMS Workspace Container Engine...</div>;
 
   // Get component path for the active block
   const getComponentPath = (blockType: string, variant: string) => {
@@ -213,12 +244,9 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
   };
 
   // Live content manipulation adjustments updates mutation hook
-  const updateActiveProps = async (key: string, value: any) => {
-    if (!activeId || !pageId) return;
-    const modified = blocks.map((b) =>
-      b.id === activeId ? { ...b, props: { ...b.props, [key]: value } } : b
-    );
-    await updateBlocks({ id: pageId, blocks: modified });
+  const updateActiveProps = (key: string, value: any) => {
+    if (!activeId) return;
+    setLocalActiveProps(prev => ({ ...prev, [key]: value }));
   };
 
   // Appends component payloads 
@@ -826,6 +854,7 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
                           <p className="text-xs text-slate-500 mt-1">Customize this block's content and style</p>
                         </div>
                         <button
+                          type="button"
                           onClick={() => setIsDeleteDialogOpen(true)}
                           className="text-xs bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-medium transition-colors"
                         >
@@ -1018,6 +1047,7 @@ export default function AdminEditor({ params }: { params: Promise<{ id: Id<"page
                   </h3>
                 </div>
                 <button
+                  type="button"
                   onClick={() => {
                     setIsDeleteDialogOpen(true);
                     setIsEditDrawerOpen(false);

@@ -21,7 +21,6 @@ export interface CardItem {
   linkText?: string;
   linkUrl?: string;
   metadata?: {
-    price?: string;
     duration?: string;
     features?: string[];
     location?: string;
@@ -112,13 +111,12 @@ export function CardBlock({
         filtered = filtered.slice(0, limit);
       }
       return filtered.map((item) => {
-        const price = item.metadata?.price;
         const topTag = item.tags && item.tags.length > 0 ? item.tags[0] : undefined;
         return {
           id: item._id,
           title: item.title,
           description: item.description,
-          badge: price || topTag,
+          badge: topTag,
           icon: item.icon,
           imageUrl: item.imageUrl,
           linkText: "View Details",

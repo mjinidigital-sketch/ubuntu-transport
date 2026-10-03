@@ -19,8 +19,6 @@ export type ServiceRow = {
     _id: string;
     name: string;
     description?: string;
-    price: string;
-    pricingType: "hourly" | "project" | "per_item" | "subscription";
     category?: string;
     duration?: string;
     features?: string[];
@@ -29,13 +27,6 @@ export type ServiceRow = {
     active: boolean;
     order?: number;
     _creationTime: number;
-};
-
-const PRICING_TYPE_COLORS: Record<string, string> = {
-    hourly: "bg-blue-100 text-blue-700",
-    project: "bg-purple-100 text-purple-700",
-    per_item: "bg-green-100 text-green-700",
-    subscription: "bg-orange-100 text-orange-700",
 };
 
 interface ColumnsProps {
@@ -97,39 +88,6 @@ export function getColumns({
                     {row.getValue("description") ?? "—"}
                 </span>
             ),
-        },
-        // Price
-        {
-            accessorKey: "price",
-            header: ({ column }: { column: any }) => (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Price
-                    <ArrowUpDown className="ml-2 size-4" />
-                </Button>
-            ),
-            cell: ({ row }: { row: any }) => (
-                <span className="font-medium">{row.getValue("price")}</span>
-            ),
-        },
-        // Pricing Type
-        {
-            accessorKey: "pricingType",
-            header: "Pricing Type",
-            cell: ({ row }: { row: any }) => {
-                const pricingType = row.getValue("pricingType") as string;
-                return (
-                    <Badge
-                        className={PRICING_TYPE_COLORS[pricingType] ?? PRICING_TYPE_COLORS.hourly}
-                        variant="outline"
-                    >
-                        {pricingType}
-                    </Badge>
-                );
-            },
-            filterFn: (row: any, id: any, value: any) => value.includes(row.getValue(id)),
         },
         // Category
         {

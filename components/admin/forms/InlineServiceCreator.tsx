@@ -4,13 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Loader2, Plus } from "lucide-react";
 import { createServiceAction } from "@/app/actions/documents";
@@ -27,8 +20,6 @@ export function InlineServiceCreator({ onServiceCreated, trigger }: InlineServic
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    price: "",
-    pricingType: "hourly" as const,
     category: "",
     active: true,
   });
@@ -45,9 +36,9 @@ export function InlineServiceCreator({ onServiceCreated, trigger }: InlineServic
         toast.success("Service created successfully");
         // Return the created service data to parent with a temporary ID
         const tempId = `temp_${Date.now()}`;
-        onServiceCreated({ _id: tempId, name: formData.name, description: formData.description, price: formData.price, pricingType: formData.pricingType, category: formData.category, active: true });
+        onServiceCreated({ _id: tempId, name: formData.name, description: formData.description, category: formData.category, active: true });
         setOpen(false);
-        setFormData({ name: "", description: "", price: "", pricingType: "hourly", category: "", active: true });
+        setFormData({ name: "", description: "", category: "", active: true });
       }
     } catch (error) {
       toast.error("An error occurred");
@@ -81,33 +72,6 @@ export function InlineServiceCreator({ onServiceCreated, trigger }: InlineServic
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   required
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="price">Price *</Label>
-                <Input
-                  id="price"
-                  value={formData.price}
-                  onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                  placeholder="e.g., $100"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pricingType">Pricing Type *</Label>
-                <Select
-                  value={formData.pricingType}
-                  onValueChange={(value: any) => setFormData({ ...formData, pricingType: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="hourly">Hourly</SelectItem>
-                    <SelectItem value="project">Project</SelectItem>
-                    <SelectItem value="per_item">Per Item</SelectItem>
-                    <SelectItem value="subscription">Subscription</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>

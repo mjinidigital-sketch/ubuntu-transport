@@ -77,7 +77,6 @@ const initialFormData: ItemFormData = {
   galleryType: "grid",
   contentBlocks: [],
   metadata: {
-    price: "",
     duration: "",
     features: [],
     client: "",
@@ -128,7 +127,6 @@ type ItemRow = {
   published?: boolean;
   order?: number;
   metadata?: {
-    price?: string;
     duration?: string;
     features?: string[];
     client?: string;
@@ -397,7 +395,6 @@ function AdminCollectionItemsContent() {
         galleryType: formData.galleryType || undefined,
         contentBlocks: formData.contentBlocks.length > 0 ? formData.contentBlocks : undefined,
         metadata: {
-          price: formData.metadata.price || undefined,
           duration: formData.metadata.duration || undefined,
           features: formData.metadata.features.length > 0 ? formData.metadata.features : undefined,
           client: formData.metadata.client || undefined,
@@ -454,7 +451,6 @@ function AdminCollectionItemsContent() {
         galleryType: formData.galleryType || undefined,
         contentBlocks: formData.contentBlocks.length > 0 ? formData.contentBlocks : undefined,
         metadata: {
-          price: formData.metadata.price || undefined,
           duration: formData.metadata.duration || undefined,
           features: formData.metadata.features.length > 0 ? formData.metadata.features : undefined,
           client: formData.metadata.client || undefined,
@@ -519,7 +515,6 @@ function AdminCollectionItemsContent() {
       galleryType: item.galleryType || "grid",
       contentBlocks: item.contentBlocks || [],
       metadata: {
-        price: item.metadata?.price || "",
         duration: item.metadata?.duration || "",
         features: item.metadata?.features || [],
         client: item.metadata?.client || "",

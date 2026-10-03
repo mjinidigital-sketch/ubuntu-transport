@@ -64,7 +64,6 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
     if (service) {
       updateLineItem(index, "serviceId", serviceId);
       updateLineItem(index, "description", service.name);
-      updateLineItem(index, "unitPrice", service.price);
     }
   };
 
@@ -101,7 +100,7 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
                 <option value="">-- Select a service --</option>
                 {localServices.map((service) => (
                   <option key={service._id} value={service._id}>
-                    {service.name} - {service.price}
+                    {service.name}
                   </option>
                 ))}
               </select>

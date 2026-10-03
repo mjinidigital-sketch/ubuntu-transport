@@ -379,8 +379,6 @@ const schema = defineSchema({
         }))),
         // Custom fields (flexible schema for different collection types)
         metadata: v.optional(v.object({
-            // Common fields (used by services and products)
-            price: v.optional(v.string()),
             // For services: duration, features
             duration: v.optional(v.string()),
             features: v.optional(v.array(v.string())),
@@ -408,9 +406,10 @@ const schema = defineSchema({
             location: v.optional(v.string()),
             expertise: v.optional(v.array(v.string())),
             achievements: v.optional(v.array(v.string())),
-            // For products: sku, stock
+            // For products: sku, stock, price
             sku: v.optional(v.string()),
             stock: v.optional(v.number()),
+            price: v.optional(v.string()),
         })),
         // FAQ and Reviews
         faq: v.optional(v.array(v.object({
@@ -667,14 +666,6 @@ const schema = defineSchema({
     services: defineTable({
         name: v.string(),
         description: v.optional(v.string()),
-        price: v.string(),
-        // Can be hourly, project-based, per-item, etc.
-        pricingType: v.union(
-            v.literal("hourly"),
-            v.literal("project"),
-            v.literal("per_item"),
-            v.literal("subscription")
-        ),
         // Service category
         category: v.optional(v.string()),
         // Optional duration
@@ -688,6 +679,17 @@ const schema = defineSchema({
         active: v.boolean(),
         // Order for display
         order: v.optional(v.number()),
+        // Pricing
+        price: v.optional(v.string()),
+        pricingType: v.optional(v.union(
+            v.literal("one-time"),
+            v.literal("subscription"),
+            v.literal("hourly"),
+            v.literal("daily"),
+            v.literal("monthly"),
+            v.literal("yearly"),
+            v.literal("project")
+        )),
     }).index("by_category", ["category"])
     .index("by_active", ["active"]),
     // Clients (can be users or standalone)

@@ -423,6 +423,516 @@ export const BLOCK_CONFIG: BlockType[] = [
     }
   },
   {
+    id: 'CollectionCardsBlock',
+    name: 'Collection Cards',
+    category: 'Content Sections',
+    description: 'Display items from your collections (services, projects, team, etc.)',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid Layout',
+        description: 'Standard responsive grid of collection items',
+        component: './CollectionCardsBlockWrapper',
+        props: ['title', 'collectionSlug', 'limit', 'columns']
+      },
+      {
+        id: 'list',
+        name: 'List Layout',
+        description: 'Horizontal list of collection items',
+        component: './CollectionCardsBlockWrapper',
+        props: ['title', 'collectionSlug', 'limit']
+      },
+      {
+        id: 'masonry',
+        name: 'Masonry Layout',
+        description: 'Pinterest-style masonry grid of collection items',
+        component: './CollectionCardsBlockWrapper',
+        props: ['title', 'collectionSlug', 'limit', 'columns']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Variant',
+        required: true,
+        options: ['grid', 'list', 'masonry']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Our Services'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Browse our offerings...'
+      },
+      collectionSlug: {
+        type: 'select',
+        label: 'Collection',
+        required: true,
+        options: ['services', 'projects', 'team', 'products', 'fleet', 'destinations']
+      },
+      limit: {
+        type: 'number',
+        label: 'Items to Display',
+        placeholder: '6'
+      },
+      columns: {
+        type: 'select',
+        label: 'Columns',
+        options: ['2', '3', '4']
+      },
+      tagFilter: {
+        type: 'text',
+        label: 'Tag Filter (optional)',
+        placeholder: 'e.g., featured'
+      },
+      showViewAll: {
+        type: 'boolean',
+        label: 'Show View All Button'
+      },
+      viewAllText: {
+        type: 'text',
+        label: 'View All Button Text',
+        placeholder: 'View All Services'
+      }
+    }
+  },
+  {
+    id: 'ServicesBlock',
+    name: 'Services',
+    category: 'Collections',
+    description: 'Display your services collection',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid Layout',
+        description: 'Standard responsive grid of services',
+        component: './ServicesBlock',
+        props: ['title', 'limit', 'columns']
+      },
+      {
+        id: 'list',
+        name: 'List Layout',
+        description: 'Horizontal list of services',
+        component: './ServicesBlock',
+        props: ['title', 'limit']
+      },
+      {
+        id: 'masonry',
+        name: 'Masonry Layout',
+        description: 'Pinterest-style masonry grid of services',
+        component: './ServicesBlock',
+        props: ['title', 'limit', 'columns']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Variant',
+        required: true,
+        options: ['grid', 'list', 'masonry']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Our Services'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Browse our service offerings...'
+      },
+      limit: {
+        type: 'number',
+        label: 'Items to Display',
+        placeholder: '6'
+      },
+      columns: {
+        type: 'select',
+        label: 'Columns',
+        options: ['2', '3', '4']
+      },
+      tagFilter: {
+        type: 'text',
+        label: 'Tag Filter (optional)',
+        placeholder: 'e.g., featured'
+      },
+      showViewAll: {
+        type: 'boolean',
+        label: 'Show View All Button'
+      },
+      viewAllText: {
+        type: 'text',
+        label: 'View All Button Text',
+        placeholder: 'View All Services'
+      }
+    }
+  },
+  {
+    id: 'ProjectsBlock',
+    name: 'Projects',
+    category: 'Collections',
+    description: 'Display your projects collection',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid Layout',
+        description: 'Standard responsive grid of projects',
+        component: './ProjectsBlock',
+        props: ['title', 'limit', 'columns']
+      },
+      {
+        id: 'list',
+        name: 'List Layout',
+        description: 'Horizontal list of projects',
+        component: './ProjectsBlock',
+        props: ['title', 'limit']
+      },
+      {
+        id: 'masonry',
+        name: 'Masonry Layout',
+        description: 'Pinterest-style masonry grid of projects',
+        component: './ProjectsBlock',
+        props: ['title', 'limit', 'columns']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Variant',
+        required: true,
+        options: ['grid', 'list', 'masonry']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Our Projects'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Browse our project portfolio...'
+      },
+      limit: {
+        type: 'number',
+        label: 'Items to Display',
+        placeholder: '6'
+      },
+      columns: {
+        type: 'select',
+        label: 'Columns',
+        options: ['2', '3', '4']
+      },
+      tagFilter: {
+        type: 'text',
+        label: 'Tag Filter (optional)',
+        placeholder: 'e.g., featured'
+      },
+      showViewAll: {
+        type: 'boolean',
+        label: 'Show View All Button'
+      },
+      viewAllText: {
+        type: 'text',
+        label: 'View All Button Text',
+        placeholder: 'View All Projects'
+      }
+    }
+  },
+  {
+    id: 'TeamBlock',
+    name: 'Team',
+    category: 'Collections',
+    description: 'Display your team collection',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid Layout',
+        description: 'Standard responsive grid of team members',
+        component: './TeamBlock',
+        props: ['title', 'limit', 'columns']
+      },
+      {
+        id: 'list',
+        name: 'List Layout',
+        description: 'Horizontal list of team members',
+        component: './TeamBlock',
+        props: ['title', 'limit']
+      },
+      {
+        id: 'masonry',
+        name: 'Masonry Layout',
+        description: 'Pinterest-style masonry grid of team members',
+        component: './TeamBlock',
+        props: ['title', 'limit', 'columns']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Variant',
+        required: true,
+        options: ['grid', 'list', 'masonry']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Our Team'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Meet our talented team...'
+      },
+      limit: {
+        type: 'number',
+        label: 'Items to Display',
+        placeholder: '6'
+      },
+      columns: {
+        type: 'select',
+        label: 'Columns',
+        options: ['2', '3', '4']
+      },
+      tagFilter: {
+        type: 'text',
+        label: 'Tag Filter (optional)',
+        placeholder: 'e.g., featured'
+      },
+      showViewAll: {
+        type: 'boolean',
+        label: 'Show View All Button'
+      },
+      viewAllText: {
+        type: 'text',
+        label: 'View All Button Text',
+        placeholder: 'View All Team'
+      }
+    }
+  },
+  {
+    id: 'ProductsBlock',
+    name: 'Products',
+    category: 'Collections',
+    description: 'Display your products collection',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid Layout',
+        description: 'Standard responsive grid of products',
+        component: './ProductsBlock',
+        props: ['title', 'limit', 'columns']
+      },
+      {
+        id: 'list',
+        name: 'List Layout',
+        description: 'Horizontal list of products',
+        component: './ProductsBlock',
+        props: ['title', 'limit']
+      },
+      {
+        id: 'masonry',
+        name: 'Masonry Layout',
+        description: 'Pinterest-style masonry grid of products',
+        component: './ProductsBlock',
+        props: ['title', 'limit', 'columns']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Variant',
+        required: true,
+        options: ['grid', 'list', 'masonry']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Our Products'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Browse our product catalog...'
+      },
+      limit: {
+        type: 'number',
+        label: 'Items to Display',
+        placeholder: '6'
+      },
+      columns: {
+        type: 'select',
+        label: 'Columns',
+        options: ['2', '3', '4']
+      },
+      tagFilter: {
+        type: 'text',
+        label: 'Tag Filter (optional)',
+        placeholder: 'e.g., featured'
+      },
+      showViewAll: {
+        type: 'boolean',
+        label: 'Show View All Button'
+      },
+      viewAllText: {
+        type: 'text',
+        label: 'View All Button Text',
+        placeholder: 'View All Products'
+      }
+    }
+  },
+  {
+    id: 'FleetBlock',
+    name: 'Fleet',
+    category: 'Collections',
+    description: 'Display your fleet collection',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid Layout',
+        description: 'Standard responsive grid of fleet items',
+        component: './FleetBlock',
+        props: ['title', 'limit', 'columns']
+      },
+      {
+        id: 'list',
+        name: 'List Layout',
+        description: 'Horizontal list of fleet items',
+        component: './FleetBlock',
+        props: ['title', 'limit']
+      },
+      {
+        id: 'masonry',
+        name: 'Masonry Layout',
+        description: 'Pinterest-style masonry grid of fleet items',
+        component: './FleetBlock',
+        props: ['title', 'limit', 'columns']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Variant',
+        required: true,
+        options: ['grid', 'list', 'masonry']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Our Fleet'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Browse our fleet...'
+      },
+      limit: {
+        type: 'number',
+        label: 'Items to Display',
+        placeholder: '6'
+      },
+      columns: {
+        type: 'select',
+        label: 'Columns',
+        options: ['2', '3', '4']
+      },
+      tagFilter: {
+        type: 'text',
+        label: 'Tag Filter (optional)',
+        placeholder: 'e.g., featured'
+      },
+      showViewAll: {
+        type: 'boolean',
+        label: 'Show View All Button'
+      },
+      viewAllText: {
+        type: 'text',
+        label: 'View All Button Text',
+        placeholder: 'View All Fleet'
+      }
+    }
+  },
+  {
+    id: 'DestinationsBlock',
+    name: 'Destinations',
+    category: 'Collections',
+    description: 'Display your destinations collection',
+    defaultVariant: 'grid',
+    variants: [
+      {
+        id: 'grid',
+        name: 'Grid Layout',
+        description: 'Standard responsive grid of destinations',
+        component: './DestinationsBlock',
+        props: ['title', 'limit', 'columns']
+      },
+      {
+        id: 'list',
+        name: 'List Layout',
+        description: 'Horizontal list of destinations',
+        component: './DestinationsBlock',
+        props: ['title', 'limit']
+      },
+      {
+        id: 'masonry',
+        name: 'Masonry Layout',
+        description: 'Pinterest-style masonry grid of destinations',
+        component: './DestinationsBlock',
+        props: ['title', 'limit', 'columns']
+      }
+    ],
+    props: {
+      variant: {
+        type: 'select',
+        label: 'Variant',
+        required: true,
+        options: ['grid', 'list', 'masonry']
+      },
+      title: {
+        type: 'text',
+        label: 'Section Title',
+        placeholder: 'Our Destinations'
+      },
+      subtitle: {
+        type: 'textarea',
+        label: 'Subtitle',
+        placeholder: 'Explore our destinations...'
+      },
+      limit: {
+        type: 'number',
+        label: 'Items to Display',
+        placeholder: '6'
+      },
+      columns: {
+        type: 'select',
+        label: 'Columns',
+        options: ['2', '3', '4']
+      },
+      tagFilter: {
+        type: 'text',
+        label: 'Tag Filter (optional)',
+        placeholder: 'e.g., featured'
+      },
+      showViewAll: {
+        type: 'boolean',
+        label: 'Show View All Button'
+      },
+      viewAllText: {
+        type: 'text',
+        label: 'View All Button Text',
+        placeholder: 'View All Destinations'
+      }
+    }
+  },
+  {
     id: 'Pricing',
     name: 'Pricing Section',
     category: 'Content Sections',
