@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -32,8 +32,6 @@ import {
   Clock,
   Sparkles,
   Link as LinkIcon,
-  Layers,
-  User,
   Package,
   Calendar,
   Search,
@@ -90,6 +88,8 @@ export interface ItemFormData {
     achievements: string[];
     sku?: string;
     stock?: number;
+    price?: string;
+    pricingType?: "one-time" | "subscription" | "hourly" | "daily" | "monthly" | "yearly" | "project";
   };
   faq: Array<{ question: string; answer: string }>;
   reviews: Array<{ author: string; rating: number; comment: string; date: string }>;
@@ -150,10 +150,8 @@ export function ItemFormSheet({
   isSubmitting = false,
 }: ItemFormSheetProps) {
   const displayCollectionIcon = getItemIconDisplay(collectionIcon);
-  const [activeTab, setActiveTab] = useState("basic");
   const [tagInput, setTagInput] = useState("");
   const [featureInput, setFeatureInput] = useState("");
-  const [techInput, setTechInput] = useState("");
   const [isManualSlug, setIsManualSlug] = useState(mode === "edit");
   const [imageError, setImageError] = useState(false);
 
@@ -210,24 +208,6 @@ export function ItemFormSheet({
     }));
   };
 
-  const addTech = () => {
-    const trimmed = techInput.trim();
-    if (trimmed && !formData.metadata.technologies.includes(trimmed)) {
-      setFormData((prev) => ({
-        ...prev,
-        metadata: { ...prev.metadata, technologies: [...prev.metadata.technologies, trimmed] },
-      }));
-      setTechInput("");
-    }
-  };
-
-  const removeTech = (tech: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      metadata: { ...prev.metadata, technologies: prev.metadata.technologies.filter((t) => t !== tech) },
-    }));
-  };
-
   // SEO Snippet Preview helpers
   const seoTitle = formData.metaTitle.trim() || formData.title || "Item Title";
   const seoDesc =
@@ -239,10 +219,10 @@ export function ItemFormSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="p-0 flex flex-col h-full bg-background border-l border-border shadow-2xl focus:outline-none"
+        className="p-0 flex flex-col h-full bg-background border-l border-border shadow-2xl focus:outline-none !w-full sm:!max-w-none md:!w-1/2 md:!max-w-[50%]"
       >
         {/* Top Header */}
-        <SheetHeader className="px-6 py-4 border-b bg-card shrink-0 flex flex-row items-center justify-between gap-4">
+        <SheetHeader className="px-8 py-4 border-b bg-card shrink-0 flex flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-xl shrink-0 border border-primary/20">
               {getItemIconDisplay(formData.icon || displayCollectionIcon)}
@@ -263,51 +243,19 @@ export function ItemFormSheet({
           </div>
         </SheetHeader>
 
-        {/* Tab Navigation */}
-        <div className="border-b bg-muted/30 px-6 py-2 shrink-0">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-8 h-10 bg-muted/80 p-1 rounded-xl border border-border/50">
-              <TabsTrigger value="basic" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                <span>📋</span>
-                <span className="hidden sm:inline">Basic</span>
-              </TabsTrigger>
-              <TabsTrigger value="content" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                <span>📝</span>
-                <span className="hidden sm:inline">Content</span>
-              </TabsTrigger>
-              <TabsTrigger value="metadata" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                <span>⚙️</span>
-                <span className="hidden sm:inline">Meta</span>
-              </TabsTrigger>
-              <TabsTrigger value="gallery" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                <span>🖼️</span>
-                <span className="hidden sm:inline">Gallery</span>
-              </TabsTrigger>
-              <TabsTrigger value="blocks" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                <span>🧱</span>
-                <span className="hidden sm:inline">Blocks</span>
-              </TabsTrigger>
-              <TabsTrigger value="faq" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                <span>❓</span>
-                <span className="hidden sm:inline">FAQ</span>
-              </TabsTrigger>
-              <TabsTrigger value="reviews" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                <span>⭐</span>
-                <span className="hidden sm:inline">Reviews</span>
-              </TabsTrigger>
-              <TabsTrigger value="seo" className="text-xs sm:text-sm font-medium gap-1.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm cursor-pointer">
-                <span>🔍</span>
-                <span className="hidden sm:inline">SEO</span>
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
-        {/* Scrollable Form Body */}
-        <div className="flex-1 overflow-y-auto px-8 py-8 space-y-8">
-          {/* TAB 1: BASIC INFO */}
-          {activeTab === "basic" && (
-            <div className="space-y-8">
+        {/* Scrollable Form Body with Accordion */}
+        <div className="flex-1 overflow-y-auto px-8 py-6">
+          <Accordion className="space-y-4">
+            {/* SECTION 1: BASIC INFO */}
+            <AccordionItem value="basic" className="border border-border/80 rounded-2xl bg-card shadow-sm overflow-hidden">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline data-[state=open]:bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">📋</span>
+                  <span className="text-sm font-semibold">Basic Information</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6 pt-0">
+                <div className="space-y-6 pt-4">
               {/* Title & Slug Group */}
               <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-5">
                 <div className="space-y-2">
@@ -371,7 +319,7 @@ export function ItemFormSheet({
               </div>
 
               {/* Visual Assets (Image & Icon) */}
-              <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-5">
+              <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-6">
                 <div className="space-y-1">
                   <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
                     <ImageIcon className="w-4 h-4 text-primary" /> Visual Assets
@@ -379,57 +327,55 @@ export function ItemFormSheet({
                   <p className="text-xs text-muted-foreground">Featured cover image and fallback icon badge.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                  {/* Image URL & Preview */}
-                  <div className="space-y-2">
-                    <ImageUpload
-                      value={formData.imageUrl}
-                      onChange={(value) => {
-                        setImageError(false);
-                        setFormData((prev) => ({ ...prev, imageUrl: value }));
-                      }}
-                      label="Cover Image"
-                      placeholder="https://images.unsplash.com/photo-..."
-                      aspectRatio="video"
+                {/* Image URL & Preview */}
+                <div className="space-y-2">
+                  <ImageUpload
+                    value={formData.imageUrl}
+                    onChange={(value) => {
+                      setImageError(false);
+                      setFormData((prev) => ({ ...prev, imageUrl: value }));
+                    }}
+                    label="Cover Image"
+                    placeholder="https://images.unsplash.com/photo-..."
+                    aspectRatio="video"
+                  />
+                </div>
+
+                {/* Icon Picker */}
+                <div className="space-y-2">
+                  <Label htmlFor="item-icon" className="text-xs font-semibold text-foreground">
+                    Icon (Emoji or Symbol)
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center text-xl shrink-0">
+                      {getItemIconDisplay(formData.icon || displayCollectionIcon)}
+                    </div>
+                    <Input
+                      id="item-icon"
+                      placeholder="e.g., 🚀, 💻, 🎯"
+                      value={formData.icon}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, icon: e.target.value }))}
+                      className="h-10 text-base rounded-xl flex-1"
                     />
                   </div>
-
-                  {/* Icon Picker */}
-                  <div className="space-y-2">
-                    <Label htmlFor="item-icon" className="text-xs font-semibold text-foreground">
-                      Icon (Emoji or Symbol)
-                    </Label>
-                    <div className="flex items-center gap-2">
-                      <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center text-xl shrink-0">
-                        {getItemIconDisplay(formData.icon || displayCollectionIcon)}
-                      </div>
-                      <Input
-                        id="item-icon"
-                        placeholder="e.g., 🚀, 💻, 🎯"
-                        value={formData.icon}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, icon: e.target.value }))}
-                        className="h-10 text-base rounded-xl flex-1"
-                      />
-                    </div>
-                    {/* Quick Emojis */}
-                    <div className="pt-1">
-                      <span className="text-[11px] text-muted-foreground block mb-1.5 font-medium">Quick Pick:</span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {QUICK_EMOJIS.map((emoji) => (
-                          <button
-                            key={emoji}
-                            type="button"
-                            onClick={() => setFormData((prev) => ({ ...prev, icon: emoji }))}
-                            className={`w-7 h-7 rounded-lg text-sm flex items-center justify-center transition-all ${
-                              formData.icon === emoji
-                                ? "bg-primary text-primary-foreground scale-110 shadow-xs ring-2 ring-primary"
-                                : "bg-muted/60 hover:bg-muted text-foreground hover:scale-105"
-                            }`}
-                          >
-                            {emoji}
-                          </button>
-                        ))}
-                      </div>
+                  {/* Quick Emojis */}
+                  <div className="pt-1">
+                    <span className="text-[11px] text-muted-foreground block mb-1.5 font-medium">Quick Pick:</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {QUICK_EMOJIS.map((emoji) => (
+                        <button
+                          key={emoji}
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, icon: emoji }))}
+                          className={`w-7 h-7 rounded-lg text-sm flex items-center justify-center transition-all ${
+                            formData.icon === emoji
+                              ? "bg-primary text-primary-foreground scale-110 shadow-xs ring-2 ring-primary"
+                              : "bg-muted/60 hover:bg-muted text-foreground hover:scale-105"
+                          }`}
+                        >
+                          {emoji}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -483,12 +429,20 @@ export function ItemFormSheet({
                   </div>
                 )}
               </div>
-            </div>
-          )}
+              </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* TAB 2: FULL CONTENT */}
-          {activeTab === "content" && (
-            <div className="space-y-6">
+            {/* SECTION 2: FULL CONTENT */}
+            <AccordionItem value="content" className="border border-border/80 rounded-2xl bg-card shadow-sm overflow-hidden">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline data-[state=open]:bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">📝</span>
+                  <span className="text-sm font-semibold">Content & Details</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6 pt-0">
+                <div className="space-y-6 pt-4">
               <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
@@ -510,12 +464,20 @@ export function ItemFormSheet({
                   />
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* TAB 3: METADATA & FIELDS */}
-          {activeTab === "metadata" && (
-            <div className="space-y-6">
+            {/* SECTION 3: METADATA & FIELDS */}
+            <AccordionItem value="metadata" className="border border-border/80 rounded-2xl bg-card shadow-sm overflow-hidden">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline data-[state=open]:bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">⚙️</span>
+                  <span className="text-sm font-semibold">Metadata & Custom Fields</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6 pt-0">
+                <div className="space-y-6 pt-4">
               <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 text-xs text-primary flex items-center gap-2.5">
                 <Sparkles className="w-4 h-4 shrink-0 text-primary" />
                 <span>
@@ -528,7 +490,7 @@ export function ItemFormSheet({
                 <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <Clock className="w-4 h-4 text-emerald-500" /> Timeline
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <Label htmlFor="meta-duration" className="text-xs font-semibold text-foreground">
                       Duration / Turnaround
@@ -602,462 +564,56 @@ export function ItemFormSheet({
                 )}
               </div>
 
-              {/* 3. Project & Portfolio Details */}
-              <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-5">
-                <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-blue-500" /> Project / Case Study Info
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-client" className="text-xs font-semibold text-foreground">
-                      Client / Organization
-                    </Label>
-                    <Input
-                      id="meta-client"
-                      placeholder="e.g., Acme Global Inc."
-                      value={formData.metadata.client || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, client: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-date" className="text-xs font-semibold text-foreground">
-                      Project Completion Date
-                    </Label>
-                    <Input
-                      id="meta-date"
-                      placeholder="e.g., Q1 2026, Oct 2025"
-                      value={formData.metadata.projectDate || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, projectDate: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="meta-url" className="text-xs font-semibold text-foreground">
-                    Live Project / External Link URL
-                  </Label>
-                  <Input
-                    id="meta-url"
-                    placeholder="https://client-project.com"
-                    value={formData.metadata.projectUrl || ""}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        metadata: { ...prev.metadata, projectUrl: e.target.value },
-                      }))
-                    }
-                    className="h-10 text-sm rounded-xl font-mono"
-                  />
-                </div>
-
-                {/* Technologies Tag List */}
-                <div className="space-y-2 pt-2">
-                  <Label className="text-xs font-semibold text-foreground">Technologies / Stack Used</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      placeholder="e.g., Next.js, TypeScript, AI..."
-                      value={techInput}
-                      onChange={(e) => setTechInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          addTech();
-                        }
-                      }}
-                      className="h-10 text-sm rounded-xl flex-1"
-                    />
-                    <Button type="button" onClick={addTech} variant="secondary" className="h-10 px-4 rounded-xl gap-1">
-                      <Plus className="w-4 h-4" /> Add
-                    </Button>
-                  </div>
-                  {formData.metadata.technologies.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {formData.metadata.technologies.map((tech) => (
-                        <Badge
-                          key={tech}
-                          variant="outline"
-                          className="px-2.5 py-1 text-xs rounded-lg gap-1.5 font-medium border-border"
-                        >
-                          <span>{tech}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeTech(tech)}
-                            className="hover:text-destructive text-muted-foreground"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* 4. Team & Contact Info */}
-              <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-5">
-                <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <User className="w-4 h-4 text-purple-500" /> Team &amp; Author Details
-                </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-role" className="text-xs font-semibold text-foreground">
-                      Role / Position Title
-                    </Label>
-                    <Input
-                      id="meta-role"
-                      placeholder="e.g., Lead Systems Architect"
-                      value={formData.metadata.role || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, role: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-email" className="text-xs font-semibold text-foreground">
-                      Contact Email
-                    </Label>
-                    <Input
-                      id="meta-email"
-                      type="email"
-                      placeholder="member@company.com"
-                      value={formData.metadata.email || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, email: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-linkedin" className="text-xs font-semibold text-foreground">
-                      LinkedIn Profile URL
-                    </Label>
-                    <Input
-                      id="meta-linkedin"
-                      placeholder="https://linkedin.com/in/username"
-                      value={formData.metadata.linkedin || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, linkedin: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-twitter" className="text-xs font-semibold text-foreground">
-                      X / Twitter URL
-                    </Label>
-                    <Input
-                      id="meta-twitter"
-                      placeholder="https://x.com/username"
-                      value={formData.metadata.twitter || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, twitter: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-github" className="text-xs font-semibold text-foreground">
-                      GitHub URL
-                    </Label>
-                    <Input
-                      id="meta-github"
-                      placeholder="https://github.com/username"
-                      value={formData.metadata.github || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, github: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-instagram" className="text-xs font-semibold text-foreground">
-                      Instagram URL
-                    </Label>
-                    <Input
-                      id="meta-instagram"
-                      placeholder="https://instagram.com/username"
-                      value={formData.metadata.instagram || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, instagram: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-facebook" className="text-xs font-semibold text-foreground">
-                      Facebook URL
-                    </Label>
-                    <Input
-                      id="meta-facebook"
-                      placeholder="https://facebook.com/username"
-                      value={formData.metadata.facebook || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, facebook: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-youtube" className="text-xs font-semibold text-foreground">
-                      YouTube URL
-                    </Label>
-                    <Input
-                      id="meta-youtube"
-                      placeholder="https://youtube.com/@username"
-                      value={formData.metadata.youtube || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, youtube: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-tiktok" className="text-xs font-semibold text-foreground">
-                      TikTok URL
-                    </Label>
-                    <Input
-                      id="meta-tiktok"
-                      placeholder="https://tiktok.com/@username"
-                      value={formData.metadata.tiktok || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, tiktok: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-dribbble" className="text-xs font-semibold text-foreground">
-                      Dribbble URL
-                    </Label>
-                    <Input
-                      id="meta-dribbble"
-                      placeholder="https://dribbble.com/username"
-                      value={formData.metadata.dribbble || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, dribbble: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-behance" className="text-xs font-semibold text-foreground">
-                      Behance URL
-                    </Label>
-                    <Input
-                      id="meta-behance"
-                      placeholder="https://behance.net/username"
-                      value={formData.metadata.behance || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, behance: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-website" className="text-xs font-semibold text-foreground">
-                      Personal Website URL
-                    </Label>
-                    <Input
-                      id="meta-website"
-                      placeholder="https://yourwebsite.com"
-                      value={formData.metadata.website || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, website: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl font-mono"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="meta-bio" className="text-xs font-semibold text-foreground">
-                    Bio / About
-                  </Label>
-                  <Textarea
-                    id="meta-bio"
-                    placeholder="Brief biography or description..."
-                    value={formData.metadata.bio || ""}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        metadata: { ...prev.metadata, bio: e.target.value },
-                      }))
-                    }
-                    rows={3}
-                    className="text-sm rounded-xl"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-department" className="text-xs font-semibold text-foreground">
-                      Department
-                    </Label>
-                    <Input
-                      id="meta-department"
-                      placeholder="e.g., Engineering, Design, Marketing"
-                      value={formData.metadata.department || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, department: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-location" className="text-xs font-semibold text-foreground">
-                      Location
-                    </Label>
-                    <Input
-                      id="meta-location"
-                      placeholder="e.g., San Francisco, CA"
-                      value={formData.metadata.location || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, location: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="meta-hireDate" className="text-xs font-semibold text-foreground">
-                      Hire Date / Joined Year
-                    </Label>
-                    <Input
-                      id="meta-hireDate"
-                      placeholder="e.g., 2020 or January 2020"
-                      value={formData.metadata.hireDate || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          metadata: { ...prev.metadata, hireDate: e.target.value },
-                        }))
-                      }
-                      className="h-10 text-sm rounded-xl"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="meta-expertise" className="text-xs font-semibold text-foreground">
-                    Expertise & Skills (comma-separated)
-                  </Label>
-                  <Input
-                    id="meta-expertise"
-                    placeholder="e.g., Leadership, Product Strategy, Business Development"
-                    value={formData.metadata.expertise?.join(", ") || ""}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        metadata: {
-                          ...prev.metadata,
-                          expertise: e.target.value.split(",").map(s => s.trim()).filter(Boolean),
-                        },
-                      }))
-                    }
-                    className="h-10 text-sm rounded-xl"
-                  />
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label htmlFor="meta-achievements" className="text-xs font-semibold text-foreground">
-                    Achievements (comma-separated)
-                  </Label>
-                  <Input
-                    id="meta-achievements"
-                    placeholder="e.g., Award-winning designer, Led product launch"
-                    value={formData.metadata.achievements?.join(", ") || ""}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        metadata: {
-                          ...prev.metadata,
-                          achievements: e.target.value.split(",").map(s => s.trim()).filter(Boolean),
-                        },
-                      }))
-                    }
-                    className="h-10 text-sm rounded-xl"
-                  />
-                </div>
-              </div>
-
-              {/* 5. Commerce & Inventory */}
+              {/* 3. Commerce & Inventory */}
               <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-5">
                 <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <Package className="w-4 h-4 text-amber-500" /> Commerce &amp; Inventory
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="meta-price" className="text-xs font-semibold text-foreground">
+                      Price
+                    </Label>
+                    <Input
+                      id="meta-price"
+                      placeholder="e.g., 120000 or $100"
+                      value={formData.metadata.price || ""}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          metadata: { ...prev.metadata, price: e.target.value },
+                        }))
+                      }
+                      className="h-10 text-sm rounded-xl font-mono"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="meta-pricingType" className="text-xs font-semibold text-foreground">
+                      Pricing Type
+                    </Label>
+                    <Select
+                      value={formData.metadata.pricingType || ""}
+                      onValueChange={(val) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          metadata: { ...prev.metadata, pricingType: val as any },
+                        }))
+                      }
+                    >
+                      <SelectTrigger id="meta-pricingType" className="h-10 rounded-xl">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="one-time">One-time</SelectItem>
+                        <SelectItem value="subscription">Subscription</SelectItem>
+                        <SelectItem value="hourly">Hourly</SelectItem>
+                        <SelectItem value="daily">Daily</SelectItem>
+                        <SelectItem value="monthly">Monthly</SelectItem>
+                        <SelectItem value="yearly">Yearly</SelectItem>
+                        <SelectItem value="project">Project</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <div className="space-y-1.5">
                     <Label htmlFor="meta-sku" className="text-xs font-semibold text-foreground">
                       SKU Code
@@ -1095,12 +651,20 @@ export function ItemFormSheet({
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* TAB 4: GALLERY */}
-          {activeTab === "gallery" && (
-            <div className="space-y-6">
+            {/* SECTION 4: GALLERY */}
+            <AccordionItem value="gallery" className="border border-border/80 rounded-2xl bg-card shadow-sm overflow-hidden">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline data-[state=open]:bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🖼️</span>
+                  <span className="text-sm font-semibold">Gallery</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6 pt-0">
+                <div className="space-y-6 pt-4">
               <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 text-xs text-primary flex items-center gap-2.5">
                 <ImageIcon className="w-4 h-4 shrink-0 text-primary" />
                 <span>Add multiple images and choose display style for your gallery.</span>
@@ -1114,7 +678,7 @@ export function ItemFormSheet({
                   <p className="text-xs text-muted-foreground">Choose how images are displayed on the item page.</p>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {["grid", "carousel", "masonry", "slider"].map((type) => (
                     <button
                       key={type}
@@ -1147,12 +711,20 @@ export function ItemFormSheet({
                   />
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* TAB 5: CONTENT BLOCKS */}
-          {activeTab === "blocks" && (
-            <div className="space-y-6">
+            {/* SECTION 5: CONTENT BLOCKS */}
+            <AccordionItem value="blocks" className="border border-border/80 rounded-2xl bg-card shadow-sm overflow-hidden">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline data-[state=open]:bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🧱</span>
+                  <span className="text-sm font-semibold">Content Blocks</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6 pt-0">
+                <div className="space-y-6 pt-4">
               <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 text-xs text-primary flex items-center gap-2.5">
                 <Sparkles className="w-4 h-4 shrink-0 text-primary" />
                 <span>Add dynamic content blocks like timelines, testimonials, CTAs, and more to your item page.</span>
@@ -1185,7 +757,7 @@ export function ItemFormSheet({
                         </Button>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
                           <Label className="text-xs font-semibold">Block Type</Label>
                           <Select
@@ -1300,12 +872,20 @@ export function ItemFormSheet({
                   </Button>
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* TAB 6: FAQ */}
-          {activeTab === "faq" && (
-            <div className="space-y-6">
+            {/* SECTION 6: FAQ */}
+            <AccordionItem value="faq" className="border border-border/80 rounded-2xl bg-card shadow-sm overflow-hidden">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline data-[state=open]:bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">❓</span>
+                  <span className="text-sm font-semibold">FAQ</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6 pt-0">
+                <div className="space-y-6 pt-4">
               <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 text-xs text-primary flex items-center gap-2.5">
                 <FileText className="w-4 h-4 shrink-0 text-primary" />
                 <span>Add frequently asked questions to help users understand your item better.</span>
@@ -1370,12 +950,20 @@ export function ItemFormSheet({
                   </Button>
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* TAB 7: REVIEWS */}
-          {activeTab === "reviews" && (
-            <div className="space-y-6">
+            {/* SECTION 7: REVIEWS */}
+            <AccordionItem value="reviews" className="border border-border/80 rounded-2xl bg-card shadow-sm overflow-hidden">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline data-[state=open]:bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">⭐</span>
+                  <span className="text-sm font-semibold">Reviews & Testimonials</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6 pt-0">
+                <div className="space-y-6 pt-4">
               <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 text-xs text-primary flex items-center gap-2.5">
                 <Sparkles className="w-4 h-4 shrink-0 text-primary" />
                 <span>Add customer reviews and testimonials to build trust and credibility.</span>
@@ -1407,7 +995,7 @@ export function ItemFormSheet({
                           <X className="w-3.5 h-3.5" />
                         </Button>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-2 gap-4">
                         <Input
                           placeholder="Author name"
                           value={review.author}
@@ -1465,12 +1053,20 @@ export function ItemFormSheet({
                   </Button>
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* TAB 8: SEO & ADVANCED */}
-          {activeTab === "seo" && (
-            <div className="space-y-6">
+            {/* SECTION 8: SEO & ADVANCED */}
+            <AccordionItem value="seo" className="border border-border/80 rounded-2xl bg-card shadow-sm overflow-hidden">
+              <AccordionTrigger className="px-6 py-4 hover:no-underline data-[state=open]:bg-muted/30">
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">🔍</span>
+                  <span className="text-sm font-semibold">SEO & Advanced</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-6 pt-0">
+                <div className="space-y-6 pt-4">
               {/* Google Search Live Preview Card */}
               <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
@@ -1495,7 +1091,7 @@ export function ItemFormSheet({
 
               {/* Meta Title & Ordering */}
               <div className="bg-card border border-border rounded-2xl p-5 shadow-xs space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                   <div className="sm:col-span-2 space-y-1.5">
                     <div className="flex items-center justify-between">
                       <Label htmlFor="meta-title" className="text-xs font-semibold text-foreground">
@@ -1578,7 +1174,7 @@ export function ItemFormSheet({
                   <p className="text-[11px] text-muted-foreground">Appears when shared on LinkedIn, Twitter, Facebook, Slack, iMessage.</p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="space-y-1.5">
                     <Label htmlFor="meta-twitterCard" className="text-xs font-semibold text-foreground">
                       X (Twitter) Card Type
@@ -1625,12 +1221,14 @@ export function ItemFormSheet({
                   <p className="text-[11px] text-muted-foreground">Specify only if this item content is syndicated or duplicate.</p>
                 </div>
               </div>
-            </div>
-          )}
+              </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
 
         {/* Sticky Drawer Footer */}
-        <SheetFooter className="px-6 py-4 border-t bg-card/95 backdrop-blur shrink-0 flex flex-row items-center justify-between gap-4">
+        <SheetFooter className="px-8 py-4 border-t bg-card/95 backdrop-blur shrink-0 flex flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Switch
               id="sheet-published-switch"

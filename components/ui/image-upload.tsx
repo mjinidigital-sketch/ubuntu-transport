@@ -179,7 +179,7 @@ export function ImageUpload({
             className="h-10 font-mono text-sm"
           />
           {value && (
-            <div className="relative rounded-xl overflow-hidden border border-border bg-muted/30">
+            <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/30">
               <div className={getAspectRatioClass()}>
                 <img
                   src={value}
@@ -251,7 +251,7 @@ export function ImageUpload({
             Max file size: {maxSizeMB}MB. Supported formats: JPG, PNG, GIF, WebP
           </p>
           {value && (
-            <div className="relative rounded-xl overflow-hidden border border-border bg-muted/30">
+            <div className="relative group rounded-xl overflow-hidden border border-border bg-muted/30">
               <div className={getAspectRatioClass()}>
                 <img
                   src={value}

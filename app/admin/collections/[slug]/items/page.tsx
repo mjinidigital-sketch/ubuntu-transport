@@ -103,6 +103,8 @@ const initialFormData: ItemFormData = {
     achievements: [],
     sku: "",
     stock: 0,
+    price: "",
+    pricingType: undefined,
   },
   faq: [],
   reviews: [],
@@ -141,6 +143,8 @@ type ItemRow = {
     stock?: number;
     expertise?: string;
     achievements?: string[];
+    price?: string;
+    pricingType?: string;
   };
   metaTitle?: string;
   metaDescription?: string;

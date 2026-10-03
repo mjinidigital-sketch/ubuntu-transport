@@ -8,6 +8,7 @@
 interface MarkdownRendererProps {
   content: string;
   className?: string;
+  disableLinks?: boolean;
 }
 
 function escapeHtml(text: string): string {
@@ -18,7 +19,7 @@ function escapeHtml(text: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function parseInline(text: string): string {
+function parseInline(text: string, disableLinks = false): string {
   // Bold + Italic: ***text*** or ___text___
   text = text.replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>");
   text = text.replace(/___(.*?)___/g, "<strong><em>$1</em></strong>");
@@ -31,14 +32,21 @@ function parseInline(text: string): string {
   // Inline code: `code`
   text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
   // Links: [text](url)
-  text = text.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
-  );
+  if (disableLinks) {
+    text = text.replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<span class="text-primary underline cursor-pointer" data-url="$2">$1</span>'
+    );
+  } else {
+    text = text.replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
+  }
   return text;
 }
 
-function parseMarkdown(md: string): string {
+function parseMarkdown(md: string, disableLinks = false): string {
   const lines = md.split("\n");
   const output: string[] = [];
   let inCodeBlock = false;
@@ -51,7 +59,7 @@ function parseMarkdown(md: string): string {
 
   const flushBlockquote = () => {
     if (blockquoteLines.length) {
-      output.push(`<blockquote>${parseMarkdown(blockquoteLines.join("\n"))}</blockquote>`);
+      output.push(`<blockquote>${parseMarkdown(blockquoteLines.join("\n"), disableLinks)}</blockquote>`);
       blockquoteLines = [];
       inBlockquote = false;
     }
@@ -120,22 +128,22 @@ function parseMarkdown(md: string): string {
 
     if (h4) {
       flushUL(); flushOL();
-      output.push(`<h4>${parseInline(h4[1])}</h4>`);
+      output.push(`<h4>${parseInline(h4[1], disableLinks)}</h4>`);
       continue;
     }
     if (h3) {
       flushUL(); flushOL();
-      output.push(`<h3>${parseInline(h3[1])}</h3>`);
+      output.push(`<h3>${parseInline(h3[1], disableLinks)}</h3>`);
       continue;
     }
     if (h2) {
       flushUL(); flushOL();
-      output.push(`<h2>${parseInline(h2[1])}</h2>`);
+      output.push(`<h2>${parseInline(h2[1], disableLinks)}</h2>`);
       continue;
     }
     if (h1) {
       flushUL(); flushOL();
-      output.push(`<h1>${parseInline(h1[1])}</h1>`);
+      output.push(`<h1>${parseInline(h1[1], disableLinks)}</h1>`);
       continue;
     }
 
@@ -147,7 +155,7 @@ function parseMarkdown(md: string): string {
         output.push("<ul>");
         inUL = true;
       }
-      output.push(`<li>${parseInline(ulMatch[1])}</li>`);
+      output.push(`<li>${parseInline(ulMatch[1], disableLinks)}</li>`);
       continue;
     }
 
@@ -159,7 +167,7 @@ function parseMarkdown(md: string): string {
         output.push("<ol>");
         inOL = true;
       }
-      output.push(`<li>${parseInline(olMatch[1])}</li>`);
+      output.push(`<li>${parseInline(olMatch[1], disableLinks)}</li>`);
       continue;
     }
 
@@ -172,7 +180,7 @@ function parseMarkdown(md: string): string {
 
     // ── Paragraph ──────────────────────────────────────────────
     flushUL(); flushOL();
-    output.push(`<p>${parseInline(line)}</p>`);
+    output.push(`<p>${parseInline(line, disableLinks)}</p>`);
   }
 
   // Flush any open blocks
@@ -186,10 +194,10 @@ function parseMarkdown(md: string): string {
   return output.join("\n");
 }
 
-export function MarkdownRenderer({ content, className = "" }: MarkdownRendererProps) {
+export function MarkdownRenderer({ content, className = "", disableLinks = false }: MarkdownRendererProps) {
   if (!content) return null;
 
-  const html = parseMarkdown(content);
+  const html = parseMarkdown(content, disableLinks);
 
   return (
     <div

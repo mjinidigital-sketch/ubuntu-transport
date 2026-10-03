@@ -121,21 +121,25 @@ export default function CollectionItemPage() {
       {/* Header */}
       <section className="py-8 px-4 border-b bg-muted/30">
         <div className="max-w-7xl mx-auto">
-          <Link href={`/collections/${collection.slug}`}>
-            <Button variant="ghost" size="sm" className="mb-4 hover:bg-primary/10">
+          <Button asChild variant="ghost" size="sm" className="mb-4 hover:bg-primary/10">
+            <Link href={`/collections/${collection.slug}`}>
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to {collection.name}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           
           <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
-            <Link href="/collections" className="hover:text-foreground transition-colors">
-              Collections
-            </Link>
+            <Button asChild variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent">
+              <Link href="/collections" className="hover:text-foreground transition-colors">
+                Collections
+              </Link>
+            </Button>
             <span>/</span>
-            <Link href={`/collections/${collection.slug}`} className="hover:text-foreground transition-colors">
-              {collection.name}
-            </Link>
+            <Button asChild variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent">
+              <Link href={`/collections/${collection.slug}`} className="hover:text-foreground transition-colors">
+                {collection.name}
+              </Link>
+            </Button>
             <span>/</span>
             <span className="text-foreground font-medium">{title}</span>
           </div>

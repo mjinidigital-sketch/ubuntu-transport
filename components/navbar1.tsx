@@ -391,18 +391,17 @@ const Navbar1Component = ({
   const renderMenuItem = useMemo(() => (item: MenuItem) => {
     return (
       <NavigationMenuItem key={item.title}>
-        <Link href={item.url}>
-          <NavigationMenuLink
-            className={cn(
-              "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
-              isActive(item.url)
-                ? "text-primary font-semibold"
-                : "text-foreground hover:text-primary"
-            )}
-          >
-            {item.title}
-          </NavigationMenuLink>
-        </Link>
+        <NavigationMenuLink
+          asChild
+          className={cn(
+            "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
+            isActive(item.url)
+              ? "text-primary font-semibold"
+              : "text-foreground hover:text-primary"
+          )}
+        >
+          <Link href={item.url}>{item.title}</Link>
+        </NavigationMenuLink>
       </NavigationMenuItem>
     );
   }, [pathname]);
@@ -494,18 +493,17 @@ const Navbar1Component = ({
                 <NavigationMenuList className="gap-1">
                   {dynamicMenu.map((item) => (
                     <NavigationMenuItem key={item.title}>
-                      <Link href={item.url}>
-                        <NavigationMenuLink
-                          className={cn(
-                            "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
-                            isActive(item.url)
-                              ? "text-primary dark:text-secondary underline underline-offset-8 font-semibold"
-                              : "text-foreground hover:text-secondary"
-                          )}
-                        >
-                          {item.title}
-                        </NavigationMenuLink>
-                      </Link>
+                      <NavigationMenuLink
+                        asChild
+                        className={cn(
+                          "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
+                          isActive(item.url)
+                            ? "text-primary dark:text-secondary underline underline-offset-8 font-semibold"
+                            : "text-foreground hover:text-secondary"
+                        )}
+                      >
+                        <Link href={item.url}>{item.title}</Link>
+                      </NavigationMenuLink>
                     </NavigationMenuItem>
                   ))}
                 </NavigationMenuList>
@@ -515,19 +513,13 @@ const Navbar1Component = ({
             {/* Right — Auth + Theme */}
             <div className="flex items-center justify-end gap-3">
               <Unauthenticated>
-                <Button
-                  variant="outline"
-                  size="sm"
-                >
+                <Button asChild variant="outline" size="sm">
                   <Link href={auth.login.url}>
                     {auth.login.title}
                   </Link>
                 </Button>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                >
+                <Button asChild variant="outline" size="sm">
                   <Link href={auth.signup.url}>
                     {auth.signup.title}
                   </Link>
@@ -629,16 +621,16 @@ const Navbar1Component = ({
                     {/* Mobile Auth */}
                     <Unauthenticated>
                       <div className="flex flex-col gap-3">
-                        <Link href={auth.login.url}>
-                          <Button variant="outline" className="w-full">
+                        <Button asChild variant="outline" className="w-full">
+                          <Link href={auth.login.url}>
                             {auth.login.title}
-                          </Button>
-                        </Link>
-                        <Link href={auth.signup.url}>
-                          <Button className="w-full">
+                          </Link>
+                        </Button>
+                        <Button asChild className="w-full">
+                          <Link href={auth.signup.url}>
                             {auth.signup.title}
-                          </Button>
-                        </Link>
+                          </Link>
+                        </Button>
                       </div>
                     </Unauthenticated>
                     <Authenticated>

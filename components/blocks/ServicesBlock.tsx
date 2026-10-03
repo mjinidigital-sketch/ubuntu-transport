@@ -106,7 +106,7 @@ export function ServicesBlock({
               <Button
                 size="lg"
                 variant="outline"
-                className="rounded-full px-8 py-6 font-semibold group border-primary/30 hover:bg-primary hover:text-primary-foreground shadow-sm hover:shadow-md transition-all gap-2"
+                className="cursor-pointer rounded-full px-8 py-6 font-semibold group border-primary/30 hover:bg-primary hover:text-primary-foreground shadow-sm hover:shadow-md transition-all gap-2"
               >
                 <span>{viewAllText}</span>
                 <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
