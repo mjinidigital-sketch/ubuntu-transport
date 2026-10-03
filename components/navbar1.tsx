@@ -458,201 +458,201 @@ const Navbar1Component = ({
     );
   }, [pathname]);
   return (
-  <>
+    <>
 
-    <TopBar email={email} phone={phone} address={address} socials={socials} />
+      <TopBar email={email} phone={phone} address={address} socials={socials} />
 
-    <section className={cn("py-2 border-b dark:border-primary/20", className)}>
-      <div className="px-4 md:px-8 lg:px-12 mx-auto">
+      <section className={cn("py-1 border-b dark:border-primary/20", className)}>
+        <div className="px-4 md:px-8 lg:px-12 mx-auto">
 
-        {/* Desktop Menu */}
-        {/* Desktop Menu */}
-        <nav className="hidden lg:flex lg:items-center lg:justify-between lg:gap-6 w-full">
-          {/* Left — Logo */}
-          <div className="flex items-center justify-start p-1 rounded-full bg-white/80 w-fit">
-            <Link
-              href={logo.url}
-              className="flex items-center gap-2"
-            >
-              <img
-                src={logo.src}
-                className="max-h-18 w-auto object-contain "
-                alt={logo.alt}
-              />
-
-              {logo.title && (
-                <span className="text-lg font-semibold tracking-tight">
-                  {logo.title}
-                </span>
-              )}
-            </Link>
-          </div>
-
-          {/* Center — Navigation */}
-          <div className="flex items-center justify-center flex-1">
-            <NavigationMenu className="">
-              <NavigationMenuList className="gap-1">
-                {dynamicMenu.map((item) => (
-                  <NavigationMenuItem key={item.title}>
-                    <Link href={item.url}>
-                      <NavigationMenuLink
-                        className={cn(
-                          "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
-                          isActive(item.url)
-                            ? "text-primary dark:text-secondary underline underline-offset-8 font-semibold"
-                            : "text-foreground hover:text-secondary"
-                        )}
-                      >
-                        {item.title}
-                      </NavigationMenuLink>
-                    </Link>
-                  </NavigationMenuItem>
-                ))}
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-          {/* Right — Auth + Theme */}
-          <div className="flex items-center justify-end gap-3">
-            <Unauthenticated>
-              <Button
-                variant="outline"
-                size="sm"
+          {/* Desktop Menu */}
+          {/* Desktop Menu */}
+          <nav className="hidden lg:flex lg:items-center lg:justify-between lg:gap-6 w-full">
+            {/* Left — Logo */}
+            <div className="flex items-center justify-start p-1 rounded-full bg-white/80 w-fit">
+              <Link
+                href={logo.url}
+                className="flex items-center gap-2"
               >
-                <Link href={auth.login.url}>
-                  {auth.login.title}
-                </Link>
-              </Button>
+                <img
+                  src={logo.src}
+                  className="max-h-16 w-auto object-contain "
+                  alt={logo.alt}
+                />
 
-              <Button
-                variant="outline"
-                size="sm"
-              >
-                <Link href={auth.signup.url}>
-                  {auth.signup.title}
-                </Link>
-              </Button>
-            </Unauthenticated>
+                {logo.title && (
+                  <span className="text-lg font-semibold tracking-tight">
+                    {logo.title}
+                  </span>
+                )}
+              </Link>
+            </div>
 
-            <Authenticated>
-              <AccountMenu />
-            </Authenticated>
-
-            <ModeToggle />
-          </div>
-        </nav>
-
-
-        {/* Mobile Menu */}
-        <div className="block lg:hidden">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Link href={logo.url} className="flex items-center gap-2">
-              <img
-                src={logo.src}
-                className="max-h-8 dark:invert"
-                alt={logo.alt}
-              />
-            </Link>
-            <Sheet>
-              <SheetTrigger
-                render={<Button variant="outline" size="icon" />}
-              >
-                <Menu className="size-4" />
-              </SheetTrigger>
-              <SheetContent className="overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>
-                    <Link href={logo.url} className="flex items-center gap-2">
-                      <img
-                        src={logo.src}
-                        className="max-h-8 dark:invert"
-                        alt={logo.alt}
-                      />
-                    </Link>
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col gap-6 p-4 rounded-xl">
-                  <Accordion className="flex w-full flex-col gap-4 rounded-none p-4">
-                    {dynamicMenu.map((item) => {
-                      if (item.items) {
-                        return (
-                          <AccordionItem
-                            key={item.title}
-                            value={item.title}
-                            className="border-b-0"
-                          >
-                            <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
-                              {item.title}
-                            </AccordionTrigger>
-                            <AccordionContent className="mt-2">
-                              {item.items.map((subItem) => (
-                                <Link
-                                  key={subItem.title}
-                                  href={subItem.url}
-                                  className={cn(
-                                    "flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground",
-                                    isActive(subItem.url) ? "bg-primary/10 text-primary font-semibold" : ""
-                                  )}
-                                >
-                                  <div className="text-foreground">{subItem.icon}</div>
-                                  <div>
-                                    <div className="text-sm font-semibold">{subItem.title}</div>
-                                    {subItem.description && (
-                                      <p className="text-sm leading-snug text-muted-foreground">
-                                        {subItem.description}
-                                      </p>
-                                    )}
-                                  </div>
-                                </Link>
-                              ))}
-                            </AccordionContent>
-                          </AccordionItem>
-                        );
-                      }
-
-                      return (
-                        <Link
-                          key={item.title}
-                          href={item.url}
+            {/* Center — Navigation */}
+            <div className="flex items-center justify-center flex-1">
+              <NavigationMenu className="">
+                <NavigationMenuList className="gap-1">
+                  {dynamicMenu.map((item) => (
+                    <NavigationMenuItem key={item.title}>
+                      <Link href={item.url}>
+                        <NavigationMenuLink
                           className={cn(
-                            "text-md font-semibold transition-colors",
-                            isActive(item.url) ? "text-primary" : "text-foreground"
+                            "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
+                            isActive(item.url)
+                              ? "text-primary dark:text-secondary underline underline-offset-8 font-semibold"
+                              : "text-foreground hover:text-secondary"
                           )}
                         >
                           {item.title}
+                        </NavigationMenuLink>
+                      </Link>
+                    </NavigationMenuItem>
+                  ))}
+                </NavigationMenuList>
+              </NavigationMenu>
+            </div>
+
+            {/* Right — Auth + Theme */}
+            <div className="flex items-center justify-end gap-3">
+              <Unauthenticated>
+                <Button
+                  variant="outline"
+                  size="sm"
+                >
+                  <Link href={auth.login.url}>
+                    {auth.login.title}
+                  </Link>
+                </Button>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                >
+                  <Link href={auth.signup.url}>
+                    {auth.signup.title}
+                  </Link>
+                </Button>
+              </Unauthenticated>
+
+              <Authenticated>
+                <AccountMenu />
+              </Authenticated>
+
+              <ModeToggle />
+            </div>
+          </nav>
+
+
+          {/* Mobile Menu */}
+          <div className="block lg:hidden">
+            <div className="flex items-center justify-between">
+              {/* Logo */}
+              <Link href={logo.url} className="flex items-center gap-2">
+                <img
+                  src={logo.src}
+                  className="max-h-8 dark:invert"
+                  alt={logo.alt}
+                />
+              </Link>
+              <Sheet>
+                <SheetTrigger
+                  render={<Button variant="outline" size="icon" />}
+                >
+                  <Menu className="size-4" />
+                </SheetTrigger>
+                <SheetContent className="overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>
+                      <Link href={logo.url} className="flex items-center gap-2">
+                        <img
+                          src={logo.src}
+                          className="max-h-8 dark:invert"
+                          alt={logo.alt}
+                        />
+                      </Link>
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col gap-6 p-4 rounded-xl">
+                    <Accordion className="flex w-full flex-col gap-4 rounded-none p-4">
+                      {dynamicMenu.map((item) => {
+                        if (item.items) {
+                          return (
+                            <AccordionItem
+                              key={item.title}
+                              value={item.title}
+                              className="border-b-0"
+                            >
+                              <AccordionTrigger className="text-md py-0 font-semibold hover:no-underline">
+                                {item.title}
+                              </AccordionTrigger>
+                              <AccordionContent className="mt-2">
+                                {item.items.map((subItem) => (
+                                  <Link
+                                    key={subItem.title}
+                                    href={subItem.url}
+                                    className={cn(
+                                      "flex min-w-80 flex-row gap-4 rounded-md p-3 leading-none no-underline transition-colors outline-none select-none hover:bg-muted hover:text-accent-foreground",
+                                      isActive(subItem.url) ? "bg-primary/10 text-primary font-semibold" : ""
+                                    )}
+                                  >
+                                    <div className="text-foreground">{subItem.icon}</div>
+                                    <div>
+                                      <div className="text-sm font-semibold">{subItem.title}</div>
+                                      {subItem.description && (
+                                        <p className="text-sm leading-snug text-muted-foreground">
+                                          {subItem.description}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </Link>
+                                ))}
+                              </AccordionContent>
+                            </AccordionItem>
+                          );
+                        }
+
+                        return (
+                          <Link
+                            key={item.title}
+                            href={item.url}
+                            className={cn(
+                              "text-md font-semibold transition-colors",
+                              isActive(item.url) ? "text-primary" : "text-foreground"
+                            )}
+                          >
+                            {item.title}
+                          </Link>
+                        );
+                      })}
+                    </Accordion>
+
+                    {/* Mobile Auth */}
+                    <Unauthenticated>
+                      <div className="flex flex-col gap-3">
+                        <Link href={auth.login.url}>
+                          <Button variant="outline" className="w-full">
+                            {auth.login.title}
+                          </Button>
                         </Link>
-                      );
-                    })}
-                  </Accordion>
-
-                  {/* Mobile Auth */}
-                  <Unauthenticated>
-                    <div className="flex flex-col gap-3">
-                      <Link href={auth.login.url}>
-                        <Button variant="outline" className="w-full">
-                          {auth.login.title}
-                        </Button>
-                      </Link>
-                      <Link href={auth.signup.url}>
-                        <Button className="w-full">
-                          {auth.signup.title}
-                        </Button>
-                      </Link>
-                    </div>
-                  </Unauthenticated>
-                  <Authenticated>
-                    <MobileAccountMenu />
-                  </Authenticated>
-                </div>
-              </SheetContent>
-            </Sheet>
+                        <Link href={auth.signup.url}>
+                          <Button className="w-full">
+                            {auth.signup.title}
+                          </Button>
+                        </Link>
+                      </div>
+                    </Unauthenticated>
+                    <Authenticated>
+                      <MobileAccountMenu />
+                    </Authenticated>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
           </div>
-        </div>
 
-      </div>
-    </section>
-  </>
+        </div>
+      </section>
+    </>
   );
 };
 
