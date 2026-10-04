@@ -1,7 +1,6 @@
 "use client";
 
 import { Book, Menu, Sunset, Trees, Zap, ChevronDown, Package } from "lucide-react";
-import { ModeToggle } from "@/components/mode-toggle";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -536,8 +535,6 @@ const Navbar1Component = ({
               ) : (
                 <AccountMenu />
               )}
-
-              <ModeToggle />
             </div>
           </nav>
 
