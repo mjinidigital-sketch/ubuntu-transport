@@ -361,11 +361,11 @@ export function QuotationFormSheet({
                 <div className="grid grid-cols-2 gap-4 p-4 bg-muted rounded-lg">
                   <div>
                     <Label className="text-[10px]">Subtotal</Label>
-                    <p className="text-lg font-bold">${totals.subtotal}</p>
+                    <p className="text-lg font-bold">Ksh {totals.subtotal}</p>
                   </div>
                   <div>
                     <Label className="text-[10px]">Total</Label>
-                    <p className="text-lg font-bold">${totals.total}</p>
+                    <p className="text-lg font-bold">Ksh {totals.total}</p>
                   </div>
                 </div>
               </div>
@@ -416,7 +416,7 @@ export function QuotationFormSheet({
                     </div>
                     <div className="flex justify-between">
                       <span>Total Amount:</span>
-                      <span className="font-bold">${totals.total}</span>
+                      <span className="font-bold">Ksh {totals.total}</span>
                     </div>
                     {formData.validUntil && (
                       <div className="flex justify-between">

@@ -243,7 +243,7 @@ export function InvoiceFormSheet({
   return (
     <>
       <Sheet open={open} onOpenChange={onClose}>
-        <SheetContent side="right" className="overflow-y-auto  max-w-[90vw] md:!max-w-[50%] w-[80%] md:!w-1/2">
+        <SheetContent side="right" className="overflow-y-auto max-w-[95vw] md:!max-w-[85%] w-[95%] md:!w-[85%] lg:!max-w-[75%] lg:!w-[75%]">
           <SheetHeader className="mb-6">
             <SheetTitle>
               {isCreating ? "Create New Invoice" : "Edit Invoice"}
@@ -268,9 +268,9 @@ export function InvoiceFormSheet({
             {/* Step 1: Basic Information */}
             {currentStep === 0 && (
               <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="invoiceNumber" className="text-[10px]">Invoice Number *</Label>
+                    <Label htmlFor="invoiceNumber" className="text-xs font-medium">Invoice Number *</Label>
                     <div className="flex gap-2">
                       <Input
                         id="invoiceNumber"
@@ -279,7 +279,7 @@ export function InvoiceFormSheet({
                           setFormData({ ...formData, invoiceNumber: e.target.value })
                         }
                         required
-                        className="h-7 text-xs"
+                        className="h-9 text-sm"
                       />
                       {isCreating && (
                         <Button
@@ -288,26 +288,26 @@ export function InvoiceFormSheet({
                           size="icon"
                           onClick={generateNumber}
                           disabled={isGeneratingNumber}
-                          className="h-7 w-7"
+                          className="h-9 w-9"
                         >
                           {isGeneratingNumber ? (
-                            <Loader2 className="size-2.5 animate-spin" />
+                            <Loader2 className="size-4 animate-spin" />
                           ) : (
-                            <Plus className="size-2.5" />
+                            <Plus className="size-4" />
                           )}
                         </Button>
                       )}
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="status" className="text-[10px]">Status</Label>
+                    <Label htmlFor="status" className="text-xs font-medium">Status</Label>
                     <Select
                       value={formData.status}
                       onValueChange={(value: any) =>
                         setFormData({ ...formData, status: value })
                       }
                     >
-                      <SelectTrigger className="h-7 text-xs">
+                      <SelectTrigger className="h-9 text-sm">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -322,7 +322,7 @@ export function InvoiceFormSheet({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="clientId" className="text-[10px]">Client *</Label>
+                  <Label htmlFor="clientId" className="text-xs font-medium">Client *</Label>
                   <div className="flex gap-2">
                     <Select
                       value={formData.clientId}
@@ -330,7 +330,7 @@ export function InvoiceFormSheet({
                         value && setFormData({ ...formData, clientId: value })
                       }
                     >
-                      <SelectTrigger className="h-7 text-xs">
+                      <SelectTrigger className="h-9 text-sm">
                         <SelectValue placeholder="Select a client" />
                       </SelectTrigger>
                       <SelectContent>
@@ -351,7 +351,7 @@ export function InvoiceFormSheet({
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="quotationId" className="text-[10px]">From Quotation (Optional)</Label>
+                  <Label htmlFor="quotationId" className="text-xs font-medium">From Quotation (Optional)</Label>
                   <Select
                     value={formData.quotationId ?? ""}
                     onValueChange={(value) => {
@@ -359,8 +359,8 @@ export function InvoiceFormSheet({
                       if (value) loadFromQuotation(value);
                     }}
                   >
-                    <SelectTrigger className="h-7 text-xs">
-                      <SelectValue placeholder="Select a quotation" />
+                    <SelectTrigger className="h-9 text-sm">
+                      <SelectValue placeholder="Select a quotation to load data" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">None</SelectItem>
@@ -373,9 +373,9 @@ export function InvoiceFormSheet({
                   </Select>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="invoiceDate" className="text-[10px]">Invoice Date *</Label>
+                    <Label htmlFor="invoiceDate" className="text-xs font-medium">Invoice Date *</Label>
                     <Input
                       id="invoiceDate"
                       type="date"
@@ -384,11 +384,11 @@ export function InvoiceFormSheet({
                         setFormData({ ...formData, invoiceDate: e.target.value })
                       }
                       required
-                      className="h-7 text-xs"
+                      className="h-9 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="dueDate" className="text-[10px]">Due Date</Label>
+                    <Label htmlFor="dueDate" className="text-xs font-medium">Due Date</Label>
                     <Input
                       id="dueDate"
                       type="date"
@@ -396,21 +396,21 @@ export function InvoiceFormSheet({
                       onChange={(e) =>
                         setFormData({ ...formData, dueDate: e.target.value })
                       }
-                      className="h-7 text-xs"
+                      className="h-9 text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="templateId" className="text-[10px]">Invoice Template</Label>
+                    <Label htmlFor="templateId" className="text-xs font-medium">Invoice Template</Label>
                     <Select
                       value={formData.templateId ?? ""}
                       onValueChange={(value) =>
                         setFormData({ ...formData, templateId: value || "" })
                       }
                     >
-                      <SelectTrigger className="h-7 text-xs">
+                      <SelectTrigger className="h-9 text-sm">
                         <SelectValue placeholder="Select template" />
                       </SelectTrigger>
                       <SelectContent>
@@ -424,7 +424,7 @@ export function InvoiceFormSheet({
                     </Select>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="taxRate" className="text-[10px]">Tax Rate (%)</Label>
+                    <Label htmlFor="taxRate" className="text-xs font-medium">Tax Rate (%)</Label>
                     <Input
                       id="taxRate"
                       type="number"
@@ -434,7 +434,7 @@ export function InvoiceFormSheet({
                       }
                       min="0"
                       step="0.1"
-                      className="h-7 text-xs"
+                      className="h-9 text-sm"
                     />
                   </div>
                 </div>
@@ -454,17 +454,17 @@ export function InvoiceFormSheet({
                 />
 
                 {/* Totals */}
-                <div className="grid grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
                   <div>
-                    <Label className="text-[10px]">Subtotal</Label>
-                    <p className="text-base font-bold">${totals.subtotal}</p>
+                    <Label className="text-xs font-medium">Subtotal</Label>
+                    <p className="text-lg font-bold">Ksh {totals.subtotal}</p>
                   </div>
                   <div>
-                    <Label className="text-[10px]">Tax ({formData.taxRate}%)</Label>
-                    <p className="text-base font-bold">${totals.taxAmount}</p>
+                    <Label className="text-xs font-medium">Tax ({formData.taxRate}%)</Label>
+                    <p className="text-lg font-bold">Ksh {totals.taxAmount}</p>
                   </div>
                   <div>
-                    <Label className="text-[10px]">Discount</Label>
+                    <Label className="text-xs font-medium">Discount</Label>
                     <Input
                       type="number"
                       value={formData.discountAmount}
@@ -473,12 +473,12 @@ export function InvoiceFormSheet({
                       }
                       min="0"
                       step="0.01"
-                      className="h-7 text-xs"
+                      className="h-9 text-sm"
                     />
                   </div>
                   <div>
-                    <Label className="text-[10px]">Total</Label>
-                    <p className="text-lg font-bold">${totals.total}</p>
+                    <Label className="text-xs font-medium">Total</Label>
+                    <p className="text-xl font-bold">Ksh {totals.total}</p>
                   </div>
                 </div>
               </div>
@@ -487,9 +487,9 @@ export function InvoiceFormSheet({
             {/* Step 3: Notes & Terms */}
             {currentStep === 2 && (
               <div className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="notes" className="text-[10px]">Notes</Label>
+                    <Label htmlFor="notes" className="text-xs font-medium">Notes</Label>
                     <Textarea
                       id="notes"
                       value={formData.notes}
@@ -497,11 +497,11 @@ export function InvoiceFormSheet({
                         setFormData({ ...formData, notes: e.target.value })
                       }
                       rows={4}
-                      className="text-xs resize-none"
+                      className="text-sm resize-none"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="terms" className="text-[10px]">Terms</Label>
+                    <Label htmlFor="terms" className="text-xs font-medium">Terms</Label>
                     <Textarea
                       id="terms"
                       value={formData.terms}
@@ -509,14 +509,14 @@ export function InvoiceFormSheet({
                         setFormData({ ...formData, terms: e.target.value })
                       }
                       rows={4}
-                      className="text-xs resize-none"
+                      className="text-sm resize-none"
                     />
                   </div>
                 </div>
 
                 <div className="p-4 bg-muted rounded-lg">
-                  <h3 className="font-semibold mb-2 text-xs">Invoice Summary</h3>
-                  <div className="space-y-2 text-[10px]">
+                  <h3 className="font-semibold mb-2 text-sm">Invoice Summary</h3>
+                  <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Invoice Number:</span>
                       <span className="font-medium">{formData.invoiceNumber}</span>
@@ -529,7 +529,7 @@ export function InvoiceFormSheet({
                     </div>
                     <div className="flex justify-between">
                       <span>Total Amount:</span>
-                      <span className="font-bold">${totals.total}</span>
+                      <span className="font-bold">Ksh {totals.total}</span>
                     </div>
                   </div>
                 </div>

@@ -289,7 +289,7 @@ export function ReceiptFormSheet({
                       ) : (
                         unpaidInvoices.map((invoice) => (
                           <SelectItem key={invoice._id} value={invoice._id}>
-                            {invoice.invoiceNumber} - {invoice.client?.name} (Balance: ${invoice.balanceDue || invoice.total})
+                            {invoice.invoiceNumber} - {invoice.client?.name} (Balance: Ksh {invoice.balanceDue || invoice.total})
                           </SelectItem>
                         ))
                       )}
@@ -385,7 +385,7 @@ export function ReceiptFormSheet({
                     </div>
                     <div className="flex justify-between">
                       <span>Amount:</span>
-                      <span className="font-bold">${formData.amount || "0.00"}</span>
+                      <span className="font-bold">Ksh {formData.amount || "0.00"}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Payment Method:</span>
@@ -436,7 +436,7 @@ export function ReceiptFormSheet({
                     </div>
                     <div className="flex justify-between">
                       <span>Amount:</span>
-                      <span className="font-bold">${formData.amount || "0.00"}</span>
+                      <span className="font-bold">Ksh {formData.amount || "0.00"}</span>
                     </div>
                   </div>
                 </div>

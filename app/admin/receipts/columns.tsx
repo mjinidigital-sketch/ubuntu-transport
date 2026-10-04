@@ -137,7 +137,7 @@ export function getColumns({
                 </Button>
             ),
             cell: ({ row }: { row: any }) => (
-                <span className="font-medium text-green-600">${row.getValue("amount")}</span>
+                <span className="font-medium text-green-600">Ksh {row.getValue("amount")}</span>
             ),
         },
         // Payment Method

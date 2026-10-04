@@ -70,19 +70,19 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <Label>Line Items</Label>
-        <Button type="button" variant="outline" size="sm" onClick={addLineItem}>
+        <Label className="text-sm font-medium">Line Items</Label>
+        <Button type="button" variant="outline" size="sm" onClick={addLineItem} className="h-9 text-sm">
           <Plus className="size-4 mr-2" />
           Add Item
         </Button>
       </div>
 
       {items.map((item, index) => (
-        <div key={index} className="grid grid-cols-12 gap-2 items-start p-4 border rounded-lg">
+        <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start p-4 border rounded-lg">
           {localServices && localServices.length > 0 && (
-            <div className="col-span-12 space-y-2 mb-2">
+            <div className="md:col-span-12 space-y-2 mb-2">
               <div className="flex items-center gap-2">
-                <Label className="text-xs">Select from Services (Optional)</Label>
+                <Label className="text-xs font-medium">Select from Services (Optional)</Label>
                 <InlineServiceCreator
                   onServiceCreated={(service) => {
                     setLocalServices([...localServices, service]);
@@ -93,7 +93,7 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
                 />
               </div>
               <select
-                className="w-full px-3 py-2 border rounded-md text-sm"
+                className="w-full px-3 py-2 border rounded-md text-sm h-9"
                 value={item.serviceId || ""}
                 onChange={(e) => handleServiceSelect(index, e.target.value)}
               >
@@ -106,48 +106,51 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
               </select>
             </div>
           )}
-          <div className="col-span-4 space-y-2">
-            <Label className="text-xs">Description</Label>
+          <div className="md:col-span-5 space-y-2">
+            <Label className="text-xs font-medium">Description</Label>
             <Input
               value={item.description}
               onChange={(e) => updateLineItem(index, "description", e.target.value)}
               placeholder="Item description"
+              className="h-9 text-sm"
             />
           </div>
-          <div className="col-span-2 space-y-2">
-            <Label className="text-xs">Quantity</Label>
+          <div className="md:col-span-2 space-y-2">
+            <Label className="text-xs font-medium">Quantity</Label>
             <Input
               type="number"
               value={item.quantity}
               onChange={(e) => updateLineItem(index, "quantity", parseFloat(e.target.value) || 0)}
               min="0"
+              className="h-9 text-sm"
             />
           </div>
-          <div className="col-span-2 space-y-2">
-            <Label className="text-xs">Unit Price</Label>
+          <div className="md:col-span-2 space-y-2">
+            <Label className="text-xs font-medium">Unit Price</Label>
             <Input
               type="number"
               value={item.unitPrice}
               onChange={(e) => updateLineItem(index, "unitPrice", e.target.value)}
               min="0"
               step="0.01"
+              className="h-9 text-sm"
             />
           </div>
-          <div className="col-span-2 space-y-2">
-            <Label className="text-xs">Total</Label>
+          <div className="md:col-span-2 space-y-2">
+            <Label className="text-xs font-medium">Total</Label>
             <Input
               value={item.total}
               readOnly
-              className="bg-muted"
+              className="bg-muted h-9 text-sm"
             />
           </div>
-          <div className="col-span-2">
+          <div className="md:col-span-1">
             <Button
               type="button"
               variant="ghost"
               size="icon"
               onClick={() => removeLineItem(index)}
-              className="mt-6"
+              className="h-9 w-9 mt-6"
             >
               <Trash2 className="size-4 text-red-500" />
             </Button>
@@ -156,7 +159,7 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
       ))}
 
       {items.length === 0 && (
-        <div className="text-center py-8 text-muted-foreground border rounded-lg">
+        <div className="text-center py-8 text-muted-foreground border rounded-lg text-sm">
           No line items added. Click "Add Item" to get started.
         </div>
       )}

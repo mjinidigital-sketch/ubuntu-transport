@@ -90,9 +90,9 @@ export function CorporateDocumentViewer({
     logoSource: "organization",
     logoPosition: "left",
     showStamp: true,
-    stampType: document.type === "receipt" ? "received" : document.type === "quotation" ? "quotation" : (document.status === "paid" ? "paid" : "seal"),
-    customStampUrl: organization?.stampUrl,
-    stampSource: "organization",
+    stampType: "custom",
+    customStampUrl: organization?.stampUrl || "/stamp-ubuntu.webp",
+    stampSource: organization?.stampUrl ? "organization" : "url",
     showSignature: true,
     signatureType: organization?.signatureUrl ? "custom" : "cursive",
     customSignatureUrl: organization?.signatureUrl,
@@ -548,13 +548,13 @@ export function CorporateDocumentViewer({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="bg-slate-800 border-slate-700 text-white">
+                        <SelectItem value="custom">🖼️ Ubuntu Official Stamp (Image)</SelectItem>
                         <SelectItem value="seal">Official Corporate Circular Seal</SelectItem>
                         <SelectItem value="paid">"PAID IN FULL" Verified Stamp</SelectItem>
                         <SelectItem value="received">"PAYMENT RECEIVED" Receipt Stamp</SelectItem>
                         <SelectItem value="approved">"APPROVED FOR PAYMENT" Stamp</SelectItem>
-                        <SelectItem value="authorized">"AUTHORIZED & SECURED" Stamp</SelectItem>
+                        <SelectItem value="authorized">&quot;AUTHORIZED &amp; SECURED&quot; Stamp</SelectItem>
                         <SelectItem value="quotation">"OFFICIAL QUOTATION" Stamp</SelectItem>
-                        <SelectItem value="custom">Custom Stamp Image</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -582,15 +582,16 @@ export function CorporateDocumentViewer({
 
                       {customization.stampSource === "url" && (
                         <div>
-                          <Label className="text-xs text-slate-300">Custom Stamp Image URL</Label>
+                          <Label className="text-xs text-slate-300">Stamp Image URL (or public path)</Label>
                           <Input
-                            placeholder="https://example.com/stamp.png (Transparent PNG recommended)"
+                            placeholder="/stamp-ubuntu.webp"
                             value={customization.customStampUrl || ""}
                             onChange={(e) =>
                               setCustomization((prev) => ({ ...prev, customStampUrl: e.target.value }))
                             }
                             className="bg-slate-900 border-slate-700 text-white text-xs mt-1"
                           />
+                          <p className="text-[10px] text-slate-500 mt-1">Default: /stamp-ubuntu.webp (Ubuntu official stamp)</p>
                         </div>
                       )}
 

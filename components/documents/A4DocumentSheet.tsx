@@ -70,25 +70,26 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
     const formattedDueDate = document.dueDate
       ? new Date(document.dueDate).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
       : document.validUntil
-      ? new Date(document.validUntil).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-      : undefined;
+        ? new Date(document.validUntil).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+        : undefined;
 
     const dueDateLabel = document.type === "quotation" ? "Valid Until" : "Due Date";
 
     // Format currency amount safely
     const formatCurrency = (val: string | number | undefined) => {
-      if (val === undefined || val === null || val === "") return "0.00";
+      if (val === undefined || val === null || val === "") return "Ksh 0.00";
       const num = typeof val === "number" ? val : parseFloat(String(val).replace(/[^0-9.-]+/g, ""));
-      return isNaN(num) ? String(val) : num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const formatted = isNaN(num) ? String(val) : num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return `Ksh ${formatted}`;
     };
 
     // Document Title
     const documentTitle =
       document.type === "invoice"
-        ? "TAX INVOICE"
+        ? "INVOICE"
         : document.type === "quotation"
-        ? "FORMAL QUOTATION"
-        : "PAYMENT RECEIPT";
+          ? "FORMAL QUOTATION"
+          : "PAYMENT RECEIPT";
 
     // Status styling with AAA contrast
     const getStatusBadge = () => {

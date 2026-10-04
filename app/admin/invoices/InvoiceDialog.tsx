@@ -219,7 +219,7 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className="mx-auto my-4 !max-w-[50%] w-[80%] md:!w-1/2 sm:!max-w-[50%] flex flex-col">
+            <DialogContent className="mx-auto my-4 !max-w-[95%] w-[95%] md:!max-w-[85%] md:!w-[85%] lg:!max-w-[75%] lg:!w-[75%] flex flex-col">
                 <DialogHeader>
                     <DialogTitle>
                         {isCreating ? "Create New Invoice" : "Edit Invoice"}
@@ -232,9 +232,9 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="flex flex-col h-full">
                     <div className="flex-1 overflow-y-auto grid gap-5 py-4 pr-2">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="invoiceNumber" className="text-[10px]">Invoice Number *</Label>
+                                <Label htmlFor="invoiceNumber" className="text-xs font-medium">Invoice Number *</Label>
                                 <div className="flex gap-2">
                                     <Input
                                         id="invoiceNumber"
@@ -243,7 +243,7 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                             setFormData({ ...formData, invoiceNumber: e.target.value })
                                         }
                                         required
-                                        className="h-7 text-xs"
+                                        className="h-9 text-sm"
                                     />
                                     {isCreating && (
                                         <Button
@@ -252,68 +252,26 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                             size="icon"
                                             onClick={generateNumber}
                                             disabled={isGeneratingNumber}
-                                            className="h-7 w-7"
+                                            className="h-9 w-9"
                                         >
                                             {isGeneratingNumber ? (
-                                                <Loader2 className="size-2.5 animate-spin" />
+                                                <Loader2 className="size-4 animate-spin" />
                                             ) : (
-                                                <Plus className="size-2.5" />
+                                                <Plus className="size-4" />
                                             )}
                                         </Button>
                                     )}
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="clientId" className="text-[10px]">Client *</Label>
-                                <Select
-                                    value={formData.clientId || ""}
-                                    onValueChange={(value) =>
-                                        setFormData({ ...formData, clientId: value || "" })
-                                    }
-                                >
-                                    <SelectTrigger className="h-7 text-xs">
-                                        <SelectValue placeholder="Select a client" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {clients.map((client) => (
-                                            <SelectItem key={client._id} value={client._id}>
-                                                {client.name} {client.companyName && `(${client.companyName})`}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="quotationId" className="text-[10px]">From Quotation</Label>
-                                <Select
-                                    value={formData.quotationId || ""}
-                                    onValueChange={(value) => {
-                                        setFormData({ ...formData, quotationId: value || "" });
-                                        if (value) loadFromQuotation(value);
-                                    }}
-                                >
-                                    <SelectTrigger className="h-7 text-xs">
-                                        <SelectValue placeholder="Optional" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="">None</SelectItem>
-                                        {quotations.map((quotation) => (
-                                            <SelectItem key={quotation._id} value={quotation._id}>
-                                                {quotation.quotationNumber} - {quotation.client?.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="status" className="text-[10px]">Status</Label>
+                                <Label htmlFor="status" className="text-xs font-medium">Status</Label>
                                 <Select
                                     value={formData.status}
                                     onValueChange={(value: any) =>
                                         setFormData({ ...formData, status: value })
                                     }
                                 >
-                                    <SelectTrigger className="h-7 text-xs">
+                                    <SelectTrigger className="h-9 text-sm">
                                         <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -327,9 +285,53 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="clientId" className="text-xs font-medium">Client *</Label>
+                            <Select
+                                value={formData.clientId || ""}
+                                onValueChange={(value) =>
+                                    setFormData({ ...formData, clientId: value || "" })
+                                }
+                            >
+                                <SelectTrigger className="h-9 text-sm">
+                                    <SelectValue placeholder="Select a client" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {clients.map((client) => (
+                                        <SelectItem key={client._id} value={client._id}>
+                                            {client.name} {client.companyName && `(${client.companyName})`}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="quotationId" className="text-xs font-medium">From Quotation (Optional)</Label>
+                            <Select
+                                value={formData.quotationId || ""}
+                                onValueChange={(value) => {
+                                    setFormData({ ...formData, quotationId: value || "" });
+                                    if (value) loadFromQuotation(value);
+                                }}
+                            >
+                                <SelectTrigger className="h-9 text-sm">
+                                    <SelectValue placeholder="Select a quotation to load data" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="">None</SelectItem>
+                                    {quotations.map((quotation) => (
+                                        <SelectItem key={quotation._id} value={quotation._id}>
+                                            {quotation.quotationNumber} - {quotation.client?.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="invoiceDate" className="text-[10px]">Invoice Date *</Label>
+                                <Label htmlFor="invoiceDate" className="text-xs font-medium">Invoice Date *</Label>
                                 <Input
                                     id="invoiceDate"
                                     type="date"
@@ -338,11 +340,11 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                         setFormData({ ...formData, invoiceDate: e.target.value })
                                     }
                                     required
-                                    className="h-7 text-xs"
+                                    className="h-9 text-sm"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="dueDate" className="text-[10px]">Due Date</Label>
+                                <Label htmlFor="dueDate" className="text-xs font-medium">Due Date</Label>
                                 <Input
                                     id="dueDate"
                                     type="date"
@@ -350,21 +352,21 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                     onChange={(e) =>
                                         setFormData({ ...formData, dueDate: e.target.value })
                                     }
-                                    className="h-7 text-xs"
+                                    className="h-9 text-sm"
                                 />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="templateId" className="text-[10px]">Invoice Template</Label>
+                                <Label htmlFor="templateId" className="text-xs font-medium">Invoice Template</Label>
                                 <Select
                                     value={formData.templateId || ""}
                                     onValueChange={(value) =>
                                         setFormData({ ...formData, templateId: value || "" })
                                     }
                                 >
-                                    <SelectTrigger className="h-7 text-xs">
+                                    <SelectTrigger className="h-9 text-sm">
                                         <SelectValue placeholder="Select template" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -378,7 +380,7 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                 </Select>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="taxRate" className="text-[10px]">Tax Rate (%)</Label>
+                                <Label htmlFor="taxRate" className="text-xs font-medium">Tax Rate (%)</Label>
                                 <Input
                                     id="taxRate"
                                     type="number"
@@ -388,7 +390,7 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                     }
                                     min="0"
                                     step="0.1"
-                                    className="h-7 text-xs"
+                                    className="h-9 text-sm"
                                 />
                             </div>
                         </div>
@@ -396,86 +398,86 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                         {/* Line Items */}
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
-                                <Label className="text-xs">Line Items</Label>
-                                <Button type="button" variant="outline" size="sm" onClick={addLineItem} className="h-7 text-[10px]">
-                                    <Plus className="size-2.5 mr-1" />
+                                <Label className="text-sm font-medium">Line Items</Label>
+                                <Button type="button" variant="outline" size="sm" onClick={addLineItem} className="h-9 text-sm">
+                                    <Plus className="size-4 mr-2" />
                                     Add Item
                                 </Button>
                             </div>
 
                             {formData.items.map((item, index) => (
-                                <div key={index} className="grid grid-cols-12 gap-3 items-start p-4 border rounded-lg">
-                                    <div className="col-span-4 space-y-2">
-                                        <Label className="text-[10px]">Description</Label>
+                                <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start p-4 border rounded-lg">
+                                    <div className="md:col-span-5 space-y-2">
+                                        <Label className="text-xs font-medium">Description</Label>
                                         <Input
                                             value={item.description}
                                             onChange={(e) => updateLineItem(index, "description", e.target.value)}
                                             placeholder="Item description"
-                                            className="h-7 text-xs"
+                                            className="h-9 text-sm"
                                         />
                                     </div>
-                                    <div className="col-span-2 space-y-2">
-                                        <Label className="text-[10px]">Quantity</Label>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="text-xs font-medium">Quantity</Label>
                                         <Input
                                             type="number"
                                             value={item.quantity}
                                             onChange={(e) => updateLineItem(index, "quantity", parseFloat(e.target.value) || 0)}
                                             min="0"
-                                            className="h-7 text-xs"
+                                            className="h-9 text-sm"
                                         />
                                     </div>
-                                    <div className="col-span-2 space-y-2">
-                                        <Label className="text-[10px]">Unit Price</Label>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="text-xs font-medium">Unit Price</Label>
                                         <Input
                                             type="number"
                                             value={item.unitPrice}
                                             onChange={(e) => updateLineItem(index, "unitPrice", e.target.value)}
                                             min="0"
                                             step="0.01"
-                                            className="h-7 text-xs"
+                                            className="h-9 text-sm"
                                         />
                                     </div>
-                                    <div className="col-span-2 space-y-2">
-                                        <Label className="text-[10px]">Total</Label>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="text-xs font-medium">Total</Label>
                                         <Input
                                             value={item.total}
                                             readOnly
-                                            className="bg-muted h-7 text-xs"
+                                            className="bg-muted h-9 text-sm"
                                         />
                                     </div>
-                                    <div className="col-span-2">
+                                    <div className="md:col-span-1">
                                         <Button
                                             type="button"
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => removeLineItem(index)}
-                                            className="h-7 w-7 mt-6"
+                                            className="h-9 w-9 mt-6"
                                         >
-                                            <Trash2 className="size-2.5 text-red-500" />
+                                            <Trash2 className="size-4 text-red-500" />
                                         </Button>
                                     </div>
                                 </div>
                             ))}
 
                             {formData.items.length === 0 && (
-                                <div className="text-center py-8 text-muted-foreground border rounded-lg text-xs">
+                                <div className="text-center py-8 text-muted-foreground border rounded-lg text-sm">
                                     No line items added. Click "Add Item" to get started.
                                 </div>
                             )}
                         </div>
 
                         {/* Totals */}
-                        <div className="grid grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-muted rounded-lg">
                             <div>
-                                <Label className="text-[10px]">Subtotal</Label>
-                                <p className="text-base font-bold">${totals.subtotal}</p>
+                                <Label className="text-xs font-medium">Subtotal</Label>
+                                <p className="text-lg font-bold">Ksh {totals.subtotal}</p>
                             </div>
                             <div>
-                                <Label className="text-[10px]">Tax ({formData.taxRate}%)</Label>
-                                <p className="text-base font-bold">${totals.taxAmount}</p>
+                                <Label className="text-xs font-medium">Tax ({formData.taxRate}%)</Label>
+                                <p className="text-lg font-bold">Ksh {totals.taxAmount}</p>
                             </div>
                             <div>
-                                <Label className="text-[10px]">Discount</Label>
+                                <Label className="text-xs font-medium">Discount</Label>
                                 <Input
                                     type="number"
                                     value={formData.discountAmount}
@@ -484,18 +486,18 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                     }
                                     min="0"
                                     step="0.01"
-                                    className="h-7 text-xs"
+                                    className="h-9 text-sm"
                                 />
                             </div>
                             <div>
-                                <Label className="text-[10px]">Total</Label>
-                                <p className="text-lg font-bold">${totals.total}</p>
+                                <Label className="text-xs font-medium">Total</Label>
+                                <p className="text-xl font-bold">Ksh {totals.total}</p>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="notes" className="text-[10px]">Notes</Label>
+                                <Label htmlFor="notes" className="text-xs font-medium">Notes</Label>
                                 <Textarea
                                     id="notes"
                                     value={formData.notes}
@@ -503,11 +505,11 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                         setFormData({ ...formData, notes: e.target.value })
                                     }
                                     rows={3}
-                                    className="text-xs resize-none"
+                                    className="text-sm resize-none"
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="terms" className="text-[10px]">Terms</Label>
+                                <Label htmlFor="terms" className="text-xs font-medium">Terms</Label>
                                 <Textarea
                                     id="terms"
                                     value={formData.terms}
@@ -515,17 +517,17 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                         setFormData({ ...formData, terms: e.target.value })
                                     }
                                     rows={3}
-                                    className="text-xs resize-none"
+                                    className="text-sm resize-none"
                                 />
                             </div>
                         </div>
                     </div>
                     <DialogFooter className="pt-4">
-                        <Button type="button" variant="outline" onClick={onClose} className="h-7 text-xs">
+                        <Button type="button" variant="outline" onClick={onClose} className="h-9 text-sm">
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isLoading || formData.items.length === 0} className="h-7 text-xs">
-                            {isLoading && <Loader2 className="mr-2 size-2.5 animate-spin" />}
+                        <Button type="submit" disabled={isLoading || formData.items.length === 0} className="h-9 text-sm">
+                            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
                             {isCreating ? "Create Invoice" : "Update Invoice"}
                         </Button>
                     </DialogFooter>

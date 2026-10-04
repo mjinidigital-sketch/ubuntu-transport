@@ -141,7 +141,7 @@ export function getColumns({
                 </Button>
             ),
             cell: ({ row }: { row: any }) => (
-                <span className="font-medium">{row.getValue("total")}</span>
+                <span className="font-medium">Ksh {row.getValue("total")}</span>
             ),
         },
         // Status
