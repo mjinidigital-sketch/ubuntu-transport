@@ -3,7 +3,8 @@
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useParams, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Calendar, User, ExternalLink, Clock, Users, Mail, Tag, Link as LinkIcon, Share2, Phone, ImageIcon, FileText, Star, HelpCircle } from "lucide-react";
 import Link from "next/link";
@@ -36,7 +37,7 @@ export default function CollectionItemPage() {
   const params = useParams();
   const [collection, setCollection] = useState<any>(null);
   const [item, setItem] = useState<any>(null);
-  
+
   const collectionData = useQuery(api.collections.getCollectionBySlug, { slug: params.slug as string });
   const itemData = useQuery(api.collections.getCollectionItemBySlug, { slug: params.itemSlug as string });
 
@@ -121,25 +122,19 @@ export default function CollectionItemPage() {
       {/* Header */}
       <section className="py-8 px-4 border-b bg-muted/30">
         <div className="max-w-7xl mx-auto">
-          <Button asChild variant="ghost" size="sm" className="mb-4 hover:bg-primary/10">
-            <Link href={`/collections/${collection.slug}`}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to {collection.name}
-            </Link>
-          </Button>
-          
+          <Link href={`/collections/${collection.slug}`} className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "mb-4 hover:bg-primary/10")}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to {collection.name}
+          </Link>
+
           <div className="flex items-center gap-2 text-sm text-muted-foreground flex-wrap">
-            <Button asChild variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent">
-              <Link href="/collections" className="hover:text-foreground transition-colors">
-                Collections
-              </Link>
-            </Button>
+            <Link href="/collections" className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "h-auto p-0 hover:bg-transparent hover:text-foreground transition-colors")}>
+              Collections
+            </Link>
             <span>/</span>
-            <Button asChild variant="ghost" size="sm" className="h-auto p-0 hover:bg-transparent">
-              <Link href={`/collections/${collection.slug}`} className="hover:text-foreground transition-colors">
-                {collection.name}
-              </Link>
-            </Button>
+            <Link href={`/collections/${collection.slug}`} className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "h-auto p-0 hover:bg-transparent hover:text-foreground transition-colors")}>
+              {collection.name}
+            </Link>
             <span>/</span>
             <span className="text-foreground font-medium">{title}</span>
           </div>
@@ -210,7 +205,7 @@ export default function CollectionItemPage() {
 
                 {/* Content Tab */}
                 <TabsContent value="content" className="space-y-6 mt-6">
-                {content && (
+                  {content && (
                     <div className="bg-card border border-border/80 rounded-2xl p-6 shadow-sm">
                       <MarkdownRenderer content={content} />
                     </div>
@@ -220,7 +215,7 @@ export default function CollectionItemPage() {
                   {metadata && (
                     <div className="border-t border-border/80 pt-8">
                       <h2 className="text-2xl font-bold mb-6">Details</h2>
-                      
+
                       {(collection.slug === 'services' || collection.slug === 'products' || collection.slug === 'fleet' || collection.slug === 'destinations') && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {metadata.duration && (
@@ -295,9 +290,9 @@ export default function CollectionItemPage() {
                               </div>
                               <div className="flex-1">
                                 <p className="text-sm text-muted-foreground">Project URL</p>
-                                <a 
-                                  href={metadata.projectUrl} 
-                                  target="_blank" 
+                                <a
+                                  href={metadata.projectUrl}
+                                  target="_blank"
                                   rel="noopener noreferrer"
                                   className="font-semibold text-primary hover:underline block truncate"
                                 >
@@ -342,7 +337,7 @@ export default function CollectionItemPage() {
                               </div>
                               <div className="flex-1">
                                 <p className="text-sm text-muted-foreground">Email</p>
-                                <a 
+                                <a
                                   href={`mailto:${metadata.email}`}
                                   className="font-semibold text-primary hover:underline block truncate"
                                 >
@@ -353,7 +348,7 @@ export default function CollectionItemPage() {
                           )}
                           <div className="md:col-span-2 flex gap-4">
                             {metadata.linkedin && (
-                              <a 
+                              <a
                                 href={metadata.linkedin}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -366,7 +361,7 @@ export default function CollectionItemPage() {
                               </a>
                             )}
                             {metadata.twitter && (
-                              <a 
+                              <a
                                 href={metadata.twitter}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -474,11 +469,10 @@ export default function CollectionItemPage() {
                           {[...Array(5)].map((_, i) => (
                             <Star
                               key={i}
-                              className={`w-5 h-5 ${
-                                i < Math.round(reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length)
-                                  ? 'fill-yellow-400 text-yellow-400'
-                                  : 'text-muted-foreground'
-                              }`}
+                              className={`w-5 h-5 ${i < Math.round(reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / reviews.length)
+                                ? 'fill-yellow-400 text-yellow-400'
+                                : 'text-muted-foreground'
+                                }`}
                             />
                           ))}
                         </div>
@@ -503,11 +497,10 @@ export default function CollectionItemPage() {
                                 {[...Array(5)].map((_, i) => (
                                   <Star
                                     key={i}
-                                    className={`w-4 h-4 ${
-                                      i < review.rating
-                                        ? 'fill-yellow-400 text-yellow-400'
-                                        : 'text-muted-foreground'
-                                    }`}
+                                    className={`w-4 h-4 ${i < review.rating
+                                      ? 'fill-yellow-400 text-yellow-400'
+                                      : 'text-muted-foreground'
+                                      }`}
                                   />
                                 ))}
                               </div>
@@ -548,7 +541,7 @@ export default function CollectionItemPage() {
                 {/* Collection Info */}
                 <div className="border border-border/80 rounded-2xl p-6 bg-card shadow-sm">
                   <h3 className="font-semibold mb-4">Collection</h3>
-                  <Link 
+                  <Link
                     href={`/collections/${collection.slug}`}
                     className="flex items-center gap-4 p-4 bg-muted/50 rounded-xl border border-border/50 hover:bg-muted/80 transition-colors"
                   >

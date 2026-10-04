@@ -20,7 +20,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -392,7 +392,7 @@ const Navbar1Component = ({
     return (
       <NavigationMenuItem key={item.title}>
         <NavigationMenuLink
-          asChild
+          href={item.url}
           className={cn(
             "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
             isActive(item.url)
@@ -400,7 +400,7 @@ const Navbar1Component = ({
               : "text-foreground hover:text-primary"
           )}
         >
-          <Link href={item.url}>{item.title}</Link>
+          {item.title}
         </NavigationMenuLink>
       </NavigationMenuItem>
     );
@@ -494,7 +494,7 @@ const Navbar1Component = ({
                   {dynamicMenu.map((item) => (
                     <NavigationMenuItem key={item.title}>
                       <NavigationMenuLink
-                        asChild
+                        href={item.url}
                         className={cn(
                           "text-sm font-medium hover:text-secondary cursor-pointer transition-colors",
                           isActive(item.url)
@@ -502,7 +502,7 @@ const Navbar1Component = ({
                             : "text-foreground hover:text-secondary"
                         )}
                       >
-                        <Link href={item.url}>{item.title}</Link>
+                        {item.title}
                       </NavigationMenuLink>
                     </NavigationMenuItem>
                   ))}
@@ -513,17 +513,13 @@ const Navbar1Component = ({
             {/* Right — Auth + Theme */}
             <div className="flex items-center justify-end gap-3">
               <Unauthenticated>
-                <Button asChild variant="outline" size="sm">
-                  <Link href={auth.login.url}>
-                    {auth.login.title}
-                  </Link>
-                </Button>
+                <Link href={auth.login.url} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                  {auth.login.title}
+                </Link>
 
-                <Button asChild variant="outline" size="sm">
-                  <Link href={auth.signup.url}>
-                    {auth.signup.title}
-                  </Link>
-                </Button>
+                <Link href={auth.signup.url} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                  {auth.signup.title}
+                </Link>
               </Unauthenticated>
 
               <Authenticated>
@@ -621,16 +617,12 @@ const Navbar1Component = ({
                     {/* Mobile Auth */}
                     <Unauthenticated>
                       <div className="flex flex-col gap-3">
-                        <Button asChild variant="outline" className="w-full">
-                          <Link href={auth.login.url}>
-                            {auth.login.title}
-                          </Link>
-                        </Button>
-                        <Button asChild className="w-full">
-                          <Link href={auth.signup.url}>
-                            {auth.signup.title}
-                          </Link>
-                        </Button>
+                        <Link href={auth.login.url} className={cn(buttonVariants({ variant: "outline" }), "w-full")}>
+                          {auth.login.title}
+                        </Link>
+                        <Link href={auth.signup.url} className={cn(buttonVariants({}), "w-full")}>
+                          {auth.signup.title}
+                        </Link>
                       </div>
                     </Unauthenticated>
                     <Authenticated>
