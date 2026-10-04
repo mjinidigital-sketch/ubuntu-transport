@@ -5,7 +5,6 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { cn } from "@/lib/utils";
 import { useQuery } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Authenticated, Unauthenticated } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useTransition, useMemo, memo, useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -102,6 +101,11 @@ function AccountMenu() {
       }
     });
   };
+
+  // Don't render if user is loading or not authenticated
+  if (user === undefined) {
+    return null;
+  }
 
   return (
     <DropdownMenu>
@@ -227,6 +231,11 @@ function MobileAccountMenu() {
     });
   };
 
+  // Don't render if user is loading or not authenticated
+  if (user === undefined) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-3 border-t pt-4">
       {/* User info */}
@@ -325,6 +334,7 @@ const Navbar1Component = ({
   const [isLoading, setIsLoading] = useState(true);
   const [orgSettings, setOrgSettings] = useState<any>(null);
   const pathname = usePathname();
+  const user = useQuery(api.users.viewer);
 
   // Fetch pages from server action on mount
   useEffect(() => {
@@ -512,19 +522,20 @@ const Navbar1Component = ({
 
             {/* Right — Auth + Theme */}
             <div className="flex items-center justify-end gap-3">
-              <Unauthenticated>
-                <Link href={auth.login.url} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-                  {auth.login.title}
-                </Link>
+              {/* Show default auth buttons while loading or when unauthenticated */}
+              {user === undefined || user === null ? (
+                <>
+                  <Link href={auth.login.url} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                    {auth.login.title}
+                  </Link>
 
-                <Link href={auth.signup.url} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
-                  {auth.signup.title}
-                </Link>
-              </Unauthenticated>
-
-              <Authenticated>
+                  <Link href={auth.signup.url} className={cn(buttonVariants({ variant: "outline", size: "sm" }))}>
+                    {auth.signup.title}
+                  </Link>
+                </>
+              ) : (
                 <AccountMenu />
-              </Authenticated>
+              )}
 
               <ModeToggle />
             </div>
@@ -615,7 +626,7 @@ const Navbar1Component = ({
                     </Accordion>
 
                     {/* Mobile Auth */}
-                    <Unauthenticated>
+                    {user === undefined || user === null ? (
                       <div className="flex flex-col gap-3">
                         <Link href={auth.login.url} className={cn(buttonVariants({ variant: "outline" }), "w-full")}>
                           {auth.login.title}
@@ -624,10 +635,9 @@ const Navbar1Component = ({
                           {auth.signup.title}
                         </Link>
                       </div>
-                    </Unauthenticated>
-                    <Authenticated>
+                    ) : (
                       <MobileAccountMenu />
-                    </Authenticated>
+                    )}
                   </div>
                 </SheetContent>
               </Sheet>
