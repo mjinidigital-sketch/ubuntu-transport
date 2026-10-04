@@ -43,6 +43,27 @@ const signupSchema = z
 
 type SignupFormValues = z.infer<typeof signupSchema>;
 
+const getAuthErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    const data = (error as any)?.data;
+    if (data) {
+      if (typeof data === "string") return data;
+      if (typeof data === "object" && data.message) return data.message;
+      if (typeof data === "object") {
+        const msgs: string[] = [];
+        for (const key of Object.keys(data)) {
+          const field = data[key];
+          if (field?._errors?.length) msgs.push(...field._errors);
+        }
+        if (msgs.length) return msgs.join(" ");
+      }
+    }
+    const clean = error.message.replace(/\[Request ID:[^\]]+\]\s*Server Error\s*/i, "").trim();
+    if (clean) return clean;
+  }
+  return "Something went wrong. Please try again.";
+};
+
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
   const { signIn } = useAuthActions();
   const router = useRouter();
@@ -74,7 +95,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
         router.push("/");
       } catch (error) {
         toast.error("Sign up failed", {
-          description: "This email may already be in use. Please try again.",
+          description: getAuthErrorMessage(error),
         });
       }
     });
@@ -185,7 +206,7 @@ export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
                   Sign up with Google
                 </Button> */}
                 <FieldDescription className="px-6 text-center">
-                  Already have an account? <a href="/signin">Sign in</a>
+                  Already have an account? <a href="/sogin">Sign in</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

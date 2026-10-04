@@ -33,6 +33,31 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+const getAuthErrorMessage = (error: unknown): string => {
+  if (error instanceof Error) {
+    // ConvexError stores the message in error.message, sometimes prefixed with "[Request ID: ...] Server Error"
+    // The actual cause is in error.message after the prefix, or in (error as any).data
+    const data = (error as any)?.data;
+    if (data) {
+      if (typeof data === "string") return data;
+      if (typeof data === "object" && data.message) return data.message;
+      // Zod error format from ConvexError(error.format())
+      if (typeof data === "object") {
+        const msgs: string[] = [];
+        for (const key of Object.keys(data)) {
+          const field = data[key];
+          if (field?._errors?.length) msgs.push(...field._errors);
+        }
+        if (msgs.length) return msgs.join(" ");
+      }
+    }
+    // Strip the [Request ID: ...] Server Error prefix if present
+    const clean = error.message.replace(/\[Request ID:[^\]]+\]\s*Server Error\s*/i, "").trim();
+    if (clean) return clean;
+  }
+  return "Something went wrong. Please try again.";
+};
+
 export function LoginForm({
   className,
   ...props
@@ -66,7 +91,7 @@ export function LoginForm({
         router.push("/");
       } catch (error) {
         toast.error("Login failed", {
-          description: "Invalid email or password. Please try again.",
+          description: getAuthErrorMessage(error),
         });
       }
     });
@@ -81,7 +106,7 @@ export function LoginForm({
         });
       } catch (error) {
         toast.error("Google login failed", {
-          description: "Something went wrong. Please try again.",
+          description: getAuthErrorMessage(error),
         });
       }
     });

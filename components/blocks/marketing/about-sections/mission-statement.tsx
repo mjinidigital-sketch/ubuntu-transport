@@ -6,7 +6,7 @@ const principles = [
     number: '01',
     title: 'Customer-Centric',
     description:
-      'We place our customers at the center of everything we do, designing products and services that solve real problems and create lasting value.',
+      'We place our customers at the center of everything we do, desoging products and services that solve real problems and create lasting value.',
   },
   {
     number: '02',

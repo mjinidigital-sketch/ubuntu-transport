@@ -197,7 +197,7 @@ function AccountMenu() {
             disabled={isPending}
             className="cursor-pointer bg-primary text-white  w-fit px-8 rounded-full text-sm"
           >
-            {isPending ? "Signing out..." : "Sign out"}
+            {isPending ? "Loging out..." : "Sign out"}
           </DropdownMenuItem>
         </DropdownMenuGroup>
 
@@ -301,7 +301,7 @@ function MobileAccountMenu() {
         disabled={isPending}
         className="w-full justify-start text-red-500 border-red-200"
       >
-        {isPending ? "Signing out..." : "Sign out"}
+        {isPending ? "Loging out..." : "Sign out"}
       </Button>
     </div>
   );

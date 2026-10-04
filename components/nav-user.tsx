@@ -190,7 +190,7 @@ export function NavUser() {
                 className="cursor-pointer text-red-500 focus:text-red-500"
               >
                 <SignOutIcon />
-                {isPending ? "Signing out..." : "Log out"}
+                {isPending ? "Loging out..." : "Log out"}
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
