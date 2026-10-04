@@ -3,6 +3,7 @@ import { v } from "convex/values";
 
 export default defineApp({
   env: {
+    SITE_URL: v.optional(v.string()),
     CONVEX_SITE_URL: v.optional(v.string()),
     NEXT_PUBLIC_CONVEX_SITE_URL: v.optional(v.string()),
   },
