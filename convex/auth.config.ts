@@ -1,8 +1,11 @@
+import { AuthConfig } from "convex/server";
+import { env } from "./_generated/server";
+
 export default {
   providers: [
     {
-      domain: "https://agile-chinchilla-48.eu-west-1.convex.site",
+      domain: env.CONVEX_SITE_URL,
       applicationID: "convex",
     },
   ],
-};
+} satisfies AuthConfig;
