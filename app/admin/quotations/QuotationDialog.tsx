@@ -45,6 +45,7 @@ interface LineItem {
     quantity: string;
     unitPrice: string;
     total: string;
+    itemDate?: string;
 }
 
 export function QuotationDialog({ quotation, clients, services, open, onClose, isCreating }: QuotationDialogProps) {
@@ -69,7 +70,10 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
                 quotationDate: new Date(quotation.quotationDate).toISOString().split('T')[0],
                 validUntil: quotation.validUntil ? new Date(quotation.validUntil).toISOString().split('T')[0] : "",
                 status: quotation.status as "draft" | "sent" | "accepted" | "rejected" | "expired",
-                items: quotation.items as LineItem[],
+                items: (quotation.items as LineItem[]).map(item => ({
+                    ...item,
+                    itemDate: item.itemDate ? new Date(item.itemDate).toISOString().split('T')[0] : undefined,
+                })),
                 notes: quotation.notes || "",
                 terms: quotation.terms || "",
             });
@@ -111,6 +115,7 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
                     quantity: "1",
                     unitPrice: "0",
                     total: "0",
+                    itemDate: new Date().toISOString().split('T')[0],
                 },
             ],
         });
@@ -156,6 +161,10 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
                 clientId: formData.clientId as any,
                 quotationDate: new Date(formData.quotationDate).getTime(),
                 validUntil: formData.validUntil ? new Date(formData.validUntil).getTime() : undefined,
+                items: formData.items.map(item => ({
+                    ...item,
+                    itemDate: item.itemDate ? new Date(item.itemDate).getTime() : undefined,
+                })),
                 ...totals,
             };
 
@@ -314,12 +323,21 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
 
                             {formData.items.map((item, index) => (
                                 <div key={index} className="grid grid-cols-12 gap-3 items-start p-4 border rounded-lg">
-                                    <div className="col-span-4 space-y-2">
+                                    <div className="col-span-3 space-y-2">
                                         <Label className="text-[10px]">Description</Label>
                                         <Input
                                             value={item.description}
                                             onChange={(e) => updateLineItem(index, "description", e.target.value)}
                                             placeholder="Item description"
+                                            className="h-7 text-xs"
+                                        />
+                                    </div>
+                                    <div className="col-span-2 space-y-2">
+                                        <Label className="text-[10px]">Date</Label>
+                                        <Input
+                                            type="date"
+                                            value={item.itemDate || ""}
+                                            onChange={(e) => updateLineItem(index, "itemDate", e.target.value)}
                                             className="h-7 text-xs"
                                         />
                                     </div>
@@ -352,7 +370,7 @@ export function QuotationDialog({ quotation, clients, services, open, onClose, i
                                             className="bg-muted h-7 text-xs"
                                         />
                                     </div>
-                                    <div className="col-span-2">
+                                    <div className="col-span-1">
                                         <Button
                                             type="button"
                                             variant="ghost"

@@ -131,20 +131,6 @@ export function DocumentSignature({
 
           {/* Underline separator */}
           <div className="w-52 border-b-2 border-slate-900 mb-2" />
-
-          {/* Signatory Details */}
-          <div className="w-52 text-right">
-            <h4 className="text-sm font-bold text-slate-900 leading-tight">
-              {signatoryName || "Authorized Representative"}
-            </h4>
-            <p className="text-xs text-slate-600 font-medium mt-0.5">
-              {signatoryTitle || "Executive Officer"}
-            </p>
-            <div className="flex items-center justify-end gap-1 mt-1 text-[10px] text-emerald-700 font-semibold">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              <span>Digitally Certified • {formattedDate}</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>

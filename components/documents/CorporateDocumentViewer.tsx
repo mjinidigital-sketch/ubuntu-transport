@@ -103,7 +103,7 @@ export function CorporateDocumentViewer({
     showPaymentDetails: true,
     showTerms: true,
     showNotes: true,
-    showQrCode: true,
+    showQrCode: false,
   });
 
   const sheetRef = useRef<HTMLDivElement>(null);

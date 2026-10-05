@@ -379,7 +379,6 @@ export const generateQuotationNumber = action({
 // Create a quotation
 export const createQuotation = mutation({
     args: {
-        quotationNumber: v.string(),
         clientId: v.id("clients"),
         quotationDate: v.number(),
         validUntil: v.optional(v.number()),
@@ -417,8 +416,17 @@ export const createQuotation = mutation({
             throw new ConvexError("Not authorized");
         }
 
+        // Auto-generate quotation number - format: QT-MONTH-YEAR-001
+        const quotations = await ctx.runQuery(internal.documents.listQuotationsInternal, {});
+        const count: number = quotations.length + 1;
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const quotationNumber = `QT-${month}-${year}-${String(count).padStart(3, '0')}`;
+
         const quotationId = await ctx.db.insert("quotations", {
             ...args,
+            quotationNumber,
         });
 
         return quotationId;
@@ -568,15 +576,16 @@ export const generateInvoiceNumber = action({
 
         const invoices = await ctx.runQuery(internal.documents.listInvoicesInternal, {});
         const count: number = invoices.length + 1;
-        const year = new Date().getFullYear();
-        return `INV-${year}-${String(count).padStart(4, '0')}`;
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        return `INV-${month}-${year}-${String(count).padStart(3, '0')}`;
     },
 });
 
 // Create an invoice
 export const createInvoice = mutation({
     args: {
-        invoiceNumber: v.string(),
         clientId: v.id("clients"),
         quotationId: v.optional(v.id("quotations")),
         invoiceDate: v.number(),
@@ -618,8 +627,17 @@ export const createInvoice = mutation({
             throw new ConvexError("Not authorized");
         }
 
+        // Auto-generate invoice number - format: INV-MONTH-YEAR-001
+        const invoices = await ctx.runQuery(internal.documents.listInvoicesInternal, {});
+        const count: number = invoices.length + 1;
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const invoiceNumber = `INV-${month}-${year}-${String(count).padStart(3, '0')}`;
+
         const invoiceId = await ctx.db.insert("invoices", {
             ...args,
+            invoiceNumber,
         });
 
         // If created from quotation, link it
@@ -785,7 +803,6 @@ export const generateReceiptNumber = action({
 // Create a receipt
 export const createReceipt = mutation({
     args: {
-        receiptNumber: v.string(),
         invoiceId: v.id("invoices"),
         clientId: v.id("clients"),
         receiptDate: v.number(),
@@ -813,8 +830,17 @@ export const createReceipt = mutation({
             throw new ConvexError("Not authorized");
         }
 
+        // Auto-generate receipt number - format: RCPT-MONTH-YEAR-001
+        const receipts = await ctx.runQuery(internal.documents.listReceiptsInternal, {});
+        const count: number = receipts.length + 1;
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        const receiptNumber = `RCPT-${month}-${year}-${String(count).padStart(3, '0')}`;
+
         const receiptId = await ctx.db.insert("receipts", {
             ...args,
+            receiptNumber,
         });
 
         // Update invoice paid amount

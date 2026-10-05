@@ -13,6 +13,7 @@ interface LineItem {
   quantity: number;
   unitPrice: string;
   total: string;
+  itemDate?: string;
 }
 
 interface LineItemsInputProps {
@@ -37,6 +38,7 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
         quantity: 1,
         unitPrice: "0",
         total: "0",
+        itemDate: new Date().toISOString().split('T')[0],
       },
     ]);
   };
@@ -106,12 +108,21 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
               </select>
             </div>
           )}
-          <div className="md:col-span-5 space-y-2">
+          <div className="md:col-span-4 space-y-2">
             <Label className="text-xs font-medium">Description</Label>
             <Input
               value={item.description}
               onChange={(e) => updateLineItem(index, "description", e.target.value)}
               placeholder="Item description"
+              className="h-9 text-sm"
+            />
+          </div>
+          <div className="md:col-span-2 space-y-2">
+            <Label className="text-xs font-medium">Date</Label>
+            <Input
+              type="date"
+              value={item.itemDate || ""}
+              onChange={(e) => updateLineItem(index, "itemDate", e.target.value)}
               className="h-9 text-sm"
             />
           </div>
@@ -136,7 +147,7 @@ export function LineItemsInput({ items, onChange, services, onServiceCreated }: 
               className="h-9 text-sm"
             />
           </div>
-          <div className="md:col-span-2 space-y-2">
+          <div className="md:col-span-1 space-y-2">
             <Label className="text-xs font-medium">Total</Label>
             <Input
               value={item.total}

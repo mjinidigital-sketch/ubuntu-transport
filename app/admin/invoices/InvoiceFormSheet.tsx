@@ -49,6 +49,7 @@ interface LineItem {
   quantity: number;
   unitPrice: string;
   total: string;
+  itemDate?: string;
 }
 
 export function InvoiceFormSheet({
@@ -62,13 +63,11 @@ export function InvoiceFormSheet({
   isCreating,
 }: InvoiceFormSheetProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [isGeneratingNumber, setIsGeneratingNumber] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
   const [localClients, setLocalClients] = useState(clients);
   const [localServices, setLocalServices] = useState(services);
   const [formData, setFormData] = useState({
-    invoiceNumber: "",
     clientId: "" as string,
     quotationId: "" as string,
     invoiceDate: new Date().toISOString().split('T')[0],
@@ -85,13 +84,15 @@ export function InvoiceFormSheet({
   useEffect(() => {
     if (invoice && !isCreating) {
       setFormData({
-        invoiceNumber: invoice.invoiceNumber,
         clientId: invoice.clientId,
         quotationId: invoice.quotationId ?? "",
         invoiceDate: new Date(invoice.invoiceDate).toISOString().split('T')[0],
         dueDate: invoice.dueDate ? new Date(invoice.dueDate).toISOString().split('T')[0] : "",
         status: invoice.status,
-        items: invoice.items as LineItem[],
+        items: (invoice.items as LineItem[]).map(item => ({
+          ...item,
+          itemDate: item.itemDate ? new Date(item.itemDate).toISOString().split('T')[0] : undefined,
+        })),
         taxRate: invoice.taxRate || 0,
         discountAmount: invoice.discountAmount || "0",
         notes: invoice.notes ?? "",
@@ -100,7 +101,6 @@ export function InvoiceFormSheet({
       });
     } else {
       setFormData({
-        invoiceNumber: "",
         clientId: "",
         quotationId: "",
         invoiceDate: new Date().toISOString().split('T')[0],
@@ -119,20 +119,6 @@ export function InvoiceFormSheet({
     setLocalClients(clients);
     setLocalServices(services);
   }, [invoice, isCreating, open, clients, services]);
-
-  const generateNumber = async () => {
-    setIsGeneratingNumber(true);
-    try {
-      const result = await generateInvoiceNumberAction();
-      if (result.success && result.number) {
-        setFormData({ ...formData, invoiceNumber: result.number });
-      }
-    } catch (error) {
-      toast.error("Failed to generate invoice number");
-    } finally {
-      setIsGeneratingNumber(false);
-    }
-  };
 
   const loadFromQuotation = async (quotationId: string | null) => {
     if (!quotationId) return;
@@ -171,6 +157,10 @@ export function InvoiceFormSheet({
         invoiceDate: new Date(formData.invoiceDate).getTime(),
         dueDate: formData.dueDate ? new Date(formData.dueDate).getTime() : undefined,
         templateId: formData.templateId || undefined,
+        items: formData.items.map(item => ({
+          ...item,
+          itemDate: item.itemDate ? new Date(item.itemDate).getTime() : undefined,
+        })),
         ...totals,
       };
 
@@ -201,7 +191,7 @@ export function InvoiceFormSheet({
   const totals = calculateTotals();
 
   const canProceedFromStep1 = () => {
-    return !!formData.invoiceNumber && !!formData.clientId && !!formData.invoiceDate;
+    return !!formData.clientId && !!formData.invoiceDate;
   };
 
   const canProceedFromStep2 = () => {
@@ -269,36 +259,6 @@ export function InvoiceFormSheet({
             {currentStep === 0 && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="invoiceNumber" className="text-xs font-medium">Invoice Number *</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="invoiceNumber"
-                        value={formData.invoiceNumber}
-                        onChange={(e) =>
-                          setFormData({ ...formData, invoiceNumber: e.target.value })
-                        }
-                        required
-                        className="h-9 text-sm"
-                      />
-                      {isCreating && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={generateNumber}
-                          disabled={isGeneratingNumber}
-                          className="h-9 w-9"
-                        >
-                          {isGeneratingNumber ? (
-                            <Loader2 className="size-4 animate-spin" />
-                          ) : (
-                            <Plus className="size-4" />
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
                   <div className="space-y-2">
                     <Label htmlFor="status" className="text-xs font-medium">Status</Label>
                     <Select
@@ -517,10 +477,6 @@ export function InvoiceFormSheet({
                 <div className="p-4 bg-muted rounded-lg">
                   <h3 className="font-semibold mb-2 text-sm">Invoice Summary</h3>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>Invoice Number:</span>
-                      <span className="font-medium">{formData.invoiceNumber}</span>
-                    </div>
                     <div className="flex justify-between">
                       <span>Client:</span>
                       <span className="font-medium">

@@ -739,6 +739,7 @@ const schema = defineSchema({
             quantity: v.number(),
             unitPrice: v.string(),
             total: v.string(),
+            itemDate: v.optional(v.number()),
         })),
         // Subtotal, tax, discount, total
         subtotal: v.string(),
@@ -787,6 +788,7 @@ const schema = defineSchema({
             quantity: v.number(),
             unitPrice: v.string(),
             total: v.string(),
+            itemDate: v.optional(v.number()),
         })),
         // Subtotal, tax, discount, total
         subtotal: v.string(),

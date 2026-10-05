@@ -47,13 +47,12 @@ interface LineItem {
     quantity: number;
     unitPrice: string;
     total: string;
+    itemDate?: string;
 }
 
 export function InvoiceDialog({ invoice, clients, services, quotations, templates, open, onClose, isCreating }: InvoiceDialogProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const [isGeneratingNumber, setIsGeneratingNumber] = useState(false);
     const [formData, setFormData] = useState({
-        invoiceNumber: "",
         clientId: "" as string,
         quotationId: "" as string,
         invoiceDate: new Date().toISOString().split('T')[0],
@@ -70,13 +69,15 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
     useEffect(() => {
         if (invoice && !isCreating) {
             setFormData({
-                invoiceNumber: invoice.invoiceNumber,
                 clientId: invoice.clientId,
                 quotationId: invoice.quotationId || "",
                 invoiceDate: new Date(invoice.invoiceDate).toISOString().split('T')[0],
                 dueDate: invoice.dueDate ? new Date(invoice.dueDate).toISOString().split('T')[0] : "",
                 status: invoice.status,
-                items: invoice.items as LineItem[],
+                items: (invoice.items as LineItem[]).map(item => ({
+                    ...item,
+                    itemDate: item.itemDate ? new Date(item.itemDate).toISOString().split('T')[0] : undefined,
+                })),
                 taxRate: invoice.taxRate || 0,
                 discountAmount: invoice.discountAmount || "0",
                 notes: invoice.notes || "",
@@ -85,7 +86,6 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
             });
         } else {
             setFormData({
-                invoiceNumber: "",
                 clientId: "",
                 quotationId: "",
                 invoiceDate: new Date().toISOString().split('T')[0],
@@ -100,20 +100,6 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
             });
         }
     }, [invoice, isCreating, open]);
-
-    const generateNumber = async () => {
-        setIsGeneratingNumber(true);
-        try {
-            const result = await generateInvoiceNumberAction();
-            if (result.success && result.number) {
-                setFormData({ ...formData, invoiceNumber: result.number });
-            }
-        } catch (error) {
-            toast.error("Failed to generate invoice number");
-        } finally {
-            setIsGeneratingNumber(false);
-        }
-    };
 
     const loadFromQuotation = async (quotationId: string) => {
         const quotation = quotations.find(q => q._id === quotationId);
@@ -137,6 +123,7 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                     quantity: 1,
                     unitPrice: "0",
                     total: "0",
+                    itemDate: new Date().toISOString().split('T')[0],
                 },
             ],
         });
@@ -188,6 +175,10 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                 invoiceDate: new Date(formData.invoiceDate).getTime(),
                 dueDate: formData.dueDate ? new Date(formData.dueDate).getTime() : undefined,
                 templateId: formData.templateId || undefined,
+                items: formData.items.map(item => ({
+                    ...item,
+                    itemDate: item.itemDate ? new Date(item.itemDate).getTime() : undefined,
+                })),
                 ...totals,
             };
 
@@ -233,36 +224,6 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                 <form onSubmit={handleSubmit} className="flex flex-col h-full">
                     <div className="flex-1 overflow-y-auto grid gap-5 py-4 pr-2">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="invoiceNumber" className="text-xs font-medium">Invoice Number *</Label>
-                                <div className="flex gap-2">
-                                    <Input
-                                        id="invoiceNumber"
-                                        value={formData.invoiceNumber}
-                                        onChange={(e) =>
-                                            setFormData({ ...formData, invoiceNumber: e.target.value })
-                                        }
-                                        required
-                                        className="h-9 text-sm"
-                                    />
-                                    {isCreating && (
-                                        <Button
-                                            type="button"
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={generateNumber}
-                                            disabled={isGeneratingNumber}
-                                            className="h-9 w-9"
-                                        >
-                                            {isGeneratingNumber ? (
-                                                <Loader2 className="size-4 animate-spin" />
-                                            ) : (
-                                                <Plus className="size-4" />
-                                            )}
-                                        </Button>
-                                    )}
-                                </div>
-                            </div>
                             <div className="space-y-2">
                                 <Label htmlFor="status" className="text-xs font-medium">Status</Label>
                                 <Select
@@ -407,12 +368,21 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
 
                             {formData.items.map((item, index) => (
                                 <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-3 items-start p-4 border rounded-lg">
-                                    <div className="md:col-span-5 space-y-2">
+                                    <div className="md:col-span-4 space-y-2">
                                         <Label className="text-xs font-medium">Description</Label>
                                         <Input
                                             value={item.description}
                                             onChange={(e) => updateLineItem(index, "description", e.target.value)}
                                             placeholder="Item description"
+                                            className="h-9 text-sm"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="text-xs font-medium">Date</Label>
+                                        <Input
+                                            type="date"
+                                            value={item.itemDate || ""}
+                                            onChange={(e) => updateLineItem(index, "itemDate", e.target.value)}
                                             className="h-9 text-sm"
                                         />
                                     </div>
@@ -437,7 +407,7 @@ export function InvoiceDialog({ invoice, clients, services, quotations, template
                                             className="h-9 text-sm"
                                         />
                                     </div>
-                                    <div className="md:col-span-2 space-y-2">
+                                    <div className="md:col-span-1 space-y-2">
                                         <Label className="text-xs font-medium">Total</Label>
                                         <Input
                                             value={item.total}

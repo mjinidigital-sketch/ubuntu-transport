@@ -47,6 +47,7 @@ interface LineItem {
   quantity: number;
   unitPrice: string;
   total: string;
+  itemDate?: string;
 }
 
 export function QuotationFormSheet({
@@ -82,7 +83,10 @@ export function QuotationFormSheet({
         quotationDate: new Date(quotation.quotationDate).toISOString().split('T')[0],
         validUntil: quotation.validUntil ? new Date(quotation.validUntil).toISOString().split('T')[0] : "",
         status: quotation.status,
-        items: quotation.items as LineItem[],
+        items: (quotation.items as LineItem[]).map(item => ({
+          ...item,
+          itemDate: item.itemDate ? new Date(item.itemDate).toISOString().split('T')[0] : undefined,
+        })),
         notes: quotation.notes || "",
         terms: quotation.terms || "",
       });
@@ -136,6 +140,10 @@ export function QuotationFormSheet({
         clientId: formData.clientId as any,
         quotationDate: new Date(formData.quotationDate).getTime(),
         validUntil: formData.validUntil ? new Date(formData.validUntil).getTime() : undefined,
+        items: formData.items.map(item => ({
+          ...item,
+          itemDate: item.itemDate ? new Date(item.itemDate).getTime() : undefined,
+        })),
         ...totals,
       };
 

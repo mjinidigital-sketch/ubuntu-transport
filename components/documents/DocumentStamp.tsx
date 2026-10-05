@@ -13,6 +13,8 @@ interface DocumentStampProps {
   referenceNumber?: string;
   color?: string;
   className?: string;
+  useLogoAsWatermark?: boolean;
+  logoUrl?: string;
 }
 
 export function DocumentStamp({
@@ -25,12 +27,21 @@ export function DocumentStamp({
   referenceNumber,
   color,
   className = "",
+  useLogoAsWatermark = false,
+  logoUrl,
 }: DocumentStampProps) {
   const stampImageUrl = stampSource === "organization" ? organizationStampUrl : customStampUrl;
 
   if (type === "custom" && stampImageUrl) {
     return (
       <div className={`relative inline-block transform -rotate-6 select-none ${className}`}>
+        {useLogoAsWatermark && logoUrl && (
+          <img
+            src={logoUrl}
+            alt="Watermark"
+            className="absolute inset-0 w-full h-full object-contain opacity-20"
+          />
+        )}
         <img
           src={stampImageUrl}
           alt="Official Stamp"
@@ -64,7 +75,7 @@ export function DocumentStamp({
         <div className="absolute inset-0 rounded-lg border-2 border-solid opacity-60 pointer-events-none" style={{ borderColor: stampColor }} />
         <span className="text-[10px] font-black uppercase tracking-widest leading-none">★ VERIFIED ★</span>
         <span className="text-2xl font-black uppercase tracking-tight my-0.5 leading-none">PAID IN FULL</span>
-        <span className="text-[10px] font-bold tracking-normal opacity-90 leading-none mt-1">{formattedDate}</span>
+        <span className="text-[10px] font-bold tracking-normal opacity-90 leading-none mt-1 font-mono text-red-600">{formattedDate}</span>
         {referenceNumber && (
           <span className="text-[8px] font-mono opacity-80 mt-0.5 uppercase tracking-tighter">REF: {referenceNumber}</span>
         )}
@@ -90,7 +101,7 @@ export function DocumentStamp({
         <div className="absolute inset-0 rounded-lg border-2 border-solid opacity-60 pointer-events-none" style={{ borderColor: stampColor }} />
         <span className="text-[9px] font-black uppercase tracking-widest leading-none">ACCOUNTS DEPT</span>
         <span className="text-xl font-black uppercase tracking-tight my-0.5 leading-none">RECEIVED</span>
-        <span className="text-[10px] font-bold tracking-normal opacity-90 leading-none mt-1">{formattedDate}</span>
+        <span className="text-[10px] font-bold tracking-normal opacity-90 leading-none mt-1 font-mono text-red-600">{formattedDate}</span>
         {referenceNumber && (
           <span className="text-[8px] font-mono opacity-80 mt-0.5 uppercase tracking-tighter">TRANS ID: {referenceNumber}</span>
         )}
@@ -207,11 +218,12 @@ export function DocumentStamp({
         <text
           x="80"
           y="108"
-          fill="currentColor"
+          fill="#dc2626"
           fontSize="8"
           fontWeight="700"
           letterSpacing="0.5"
           textAnchor="middle"
+          fontFamily="monospace"
         >
           {formattedDate}
         </text>
