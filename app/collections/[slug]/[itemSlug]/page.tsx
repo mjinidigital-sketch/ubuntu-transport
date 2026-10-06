@@ -40,6 +40,7 @@ export default function CollectionItemPage() {
 
   const collectionData = useQuery(api.collections.getCollectionBySlug, { slug: params.slug as string });
   const itemData = useQuery(api.collections.getCollectionItemBySlug, { slug: params.itemSlug as string });
+  const organization = useQuery(api.organization.getOrganization);
 
   useEffect(() => {
     if (collectionData) {
@@ -66,7 +67,7 @@ export default function CollectionItemPage() {
     const seoTitle = item.metaTitle || item.title;
     const seoDescription = item.metaDescription || item.description || `Learn more about ${item.title} in our ${collection.name} collection.`;
     const url = `https://yourdomain.com/collections/${collection.slug}/${item.slug}`;
-    const ogImageUrl = item.ogImage || item.imageUrl;
+    const ogImageUrl = item.ogImage || item.imageUrl || organization?.defaultOgImage || '';
 
     document.title = seoTitle;
 
@@ -81,7 +82,7 @@ export default function CollectionItemPage() {
     const ogTags = [
       { property: 'og:title', content: seoTitle },
       { property: 'og:description', content: seoDescription },
-      { property: 'og:image', content: ogImageUrl || '' },
+      { property: 'og:image', content: ogImageUrl },
       { property: 'og:url', content: url },
       { property: 'og:type', content: 'article' },
     ];
@@ -102,8 +103,8 @@ export default function CollectionItemPage() {
       canonical.rel = 'canonical';
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', item.canonicalUrl || url);
-  }, [item, collection]);
+    canonical.setAttribute('href', item.canonicalUrl || organization?.defaultCanonicalUrl || url);
+  }, [item, collection, organization]);
 
   if (!collection || !item) {
     return <div className="min-h-screen flex items-center justify-center">

@@ -177,7 +177,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="companyName">Company Name</Label>
+                                <Label htmlFor="companyName">Company Name (Optional)</Label>
                                 <Input
                                     id="companyName"
                                     value={formData.companyName}
@@ -187,7 +187,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="taxId">Tax ID</Label>
+                                <Label htmlFor="taxId">Tax ID (Optional)</Label>
                                 <Input
                                     id="taxId"
                                     value={formData.taxId}
@@ -200,7 +200,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="email">Email (Optional)</Label>
                                 <Input
                                     id="email"
                                     type="email"
@@ -211,7 +211,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="phone">Phone</Label>
+                                <Label htmlFor="phone">Phone (Optional)</Label>
                                 <Input
                                     id="phone"
                                     value={formData.phone}
@@ -223,7 +223,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="address">Address</Label>
+                            <Label htmlFor="address">Address (Optional)</Label>
                             <Input
                                 id="address"
                                 value={formData.address}
@@ -235,7 +235,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
 
                         <div className="grid grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="city">City</Label>
+                                <Label htmlFor="city">City (Optional)</Label>
                                 <Input
                                     id="city"
                                     value={formData.city}
@@ -245,7 +245,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="state">State/Province</Label>
+                                <Label htmlFor="state">State/Province (Optional)</Label>
                                 <Input
                                     id="state"
                                     value={formData.state}
@@ -255,7 +255,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="postalCode">Postal Code</Label>
+                                <Label htmlFor="postalCode">Postal Code (Optional)</Label>
                                 <Input
                                     id="postalCode"
                                     value={formData.postalCode}
@@ -267,7 +267,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="country">Country</Label>
+                            <Label htmlFor="country">Country (Optional)</Label>
                             <Input
                                 id="country"
                                 value={formData.country}
@@ -278,7 +278,7 @@ export function ClientDialog({ client, users, open, onClose, isCreating }: Clien
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="notes">Notes</Label>
+                            <Label htmlFor="notes">Notes (Optional)</Label>
                             <Textarea
                                 id="notes"
                                 value={formData.notes}

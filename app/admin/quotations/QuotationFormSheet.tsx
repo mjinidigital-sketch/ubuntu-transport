@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2, Plus, Download } from "lucide-react";
 import { QuotationRow } from "./columns";
 import {
   generateQuotationNumberAction,
@@ -492,9 +492,31 @@ export function QuotationFormSheet({
           <div className="w-full max-w-6xl h-full flex flex-col bg-white rounded-lg overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b">
               <h2 className="text-lg font-semibold">Ubuntu Style Preview</h2>
-              <Button variant="outline" size="sm" onClick={() => setShowUbuntuPreview(false)}>
-                Close
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const previewElement = document.querySelector('[data-ubuntu-preview]') as HTMLElement;
+                    if (previewElement) {
+                      const filename = `quotation-${previewQuotation?.quotationNumber || 'draft'}.pdf`;
+                      import("@/components/documents/pdf-export").then(({ exportElementToPdf }) => {
+                        exportElementToPdf(previewElement, filename).then(() => {
+                          toast.success("PDF downloaded successfully");
+                        }).catch(() => {
+                          toast.error("Failed to download PDF");
+                        });
+                      });
+                    }
+                  }}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Download PDF
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => setShowUbuntuPreview(false)}>
+                  Close
+                </Button>
+              </div>
             </div>
             <div className="flex-1 overflow-auto">
               <UbuntuQuotationPreview

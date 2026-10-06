@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus } from "lucide-react";
 import { createClientAction } from "@/app/actions/documents";
 import { toast } from "sonner";
@@ -12,13 +13,15 @@ import { toast } from "sonner";
 interface InlineClientCreatorProps {
   onClientCreated: (client: any) => void;
   trigger?: React.ReactNode;
+  users?: any[];
 }
 
-export function InlineClientCreator({ onClientCreated, trigger }: InlineClientCreatorProps) {
+export function InlineClientCreator({ onClientCreated, trigger, users }: InlineClientCreatorProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
+    userId: "" as string | undefined,
     email: "",
     phone: "",
     companyName: "",
@@ -30,7 +33,11 @@ export function InlineClientCreator({ onClientCreated, trigger }: InlineClientCr
     setIsLoading(true);
 
     try {
-      const result = await createClientAction(formData);
+      const submitData = {
+        ...formData,
+        userId: formData.userId || undefined,
+      };
+      const result = await createClientAction(submitData);
       if (result.error) {
         toast.error(result.error);
       } else {
@@ -39,7 +46,7 @@ export function InlineClientCreator({ onClientCreated, trigger }: InlineClientCr
         const tempId = `temp_${Date.now()}`;
         onClientCreated({ _id: tempId, name: formData.name, email: formData.email, phone: formData.phone, companyName: formData.companyName, active: true });
         setOpen(false);
-        setFormData({ name: "", email: "", phone: "", companyName: "", active: true });
+        setFormData({ name: "", userId: undefined, email: "", phone: "", companyName: "", active: true });
       }
     } catch (error) {
       toast.error("An error occurred");
@@ -74,8 +81,31 @@ export function InlineClientCreator({ onClientCreated, trigger }: InlineClientCr
                   required
                 />
               </div>
+              {users && users.length > 0 && (
+                <div className="space-y-2">
+                  <Label htmlFor="userId">Link to User (Optional)</Label>
+                  <Select
+                    value={formData.userId}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, userId: value || "" })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a user" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">No user linked</SelectItem>
+                      {users.map((user) => (
+                        <SelectItem key={user._id} value={user._id}>
+                          {user.name || user.email} ({user.email})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="space-y-2">
-                <Label htmlFor="companyName">Company Name</Label>
+                <Label htmlFor="companyName">Company Name (Optional)</Label>
                 <Input
                   id="companyName"
                   value={formData.companyName}
@@ -83,7 +113,7 @@ export function InlineClientCreator({ onClientCreated, trigger }: InlineClientCr
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Email (Optional)</Label>
                 <Input
                   id="email"
                   type="email"
@@ -92,7 +122,7 @@ export function InlineClientCreator({ onClientCreated, trigger }: InlineClientCr
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone">Phone (Optional)</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
