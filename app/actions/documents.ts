@@ -165,6 +165,18 @@ export async function deleteQuotationAction(id: string) {
     }
 }
 
+export async function migrateQuotationsAction() {
+    const token = await convexAuthNextjsToken();
+    try {
+        const result = await fetchMutation(api.quotations.migrateQuotationsWithDefaults, {}, { token });
+        revalidatePath("/admin/quotations");
+        return { success: true, result };
+    } catch (error) {
+        console.error("Failed to migrate quotations:", error);
+        return { error: "Failed to migrate quotations" };
+    }
+}
+
 // ==================== INVOICES ====================
 
 export const getInvoices = cache(async () => {

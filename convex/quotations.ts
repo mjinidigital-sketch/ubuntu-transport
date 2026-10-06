@@ -122,3 +122,38 @@ export const generateQuotationNumber = query({
     return `QT-${year}-${String(count).padStart(4, "0")}`;
   },
 });
+
+// Migration: Add validUntil and terms to existing quotations
+export const migrateQuotationsWithDefaults = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const quotations = await ctx.db.query("quotations").collect();
+    const defaultTerms = "This quotation is valid for 14 days from the date of issue. Prices are subject to change without prior notice. Payment terms: 50% advance, 50% upon completion.";
+
+    let updatedCount = 0;
+    for (const quotation of quotations) {
+      const updates: any = {};
+
+      // Add validUntil if missing (14 days from date)
+      if (!quotation.validUntil && quotation.date) {
+        const quotationDate = new Date(quotation.date);
+        const validUntilDate = new Date(quotationDate);
+        validUntilDate.setDate(quotationDate.getDate() + 14);
+        updates.validUntil = validUntilDate.getTime();
+      }
+
+      // Add terms if missing
+      if (!quotation.terms) {
+        updates.terms = defaultTerms;
+      }
+
+      // Apply updates if any
+      if (Object.keys(updates).length > 0) {
+        await ctx.db.patch(quotation._id, updates);
+        updatedCount++;
+      }
+    }
+
+    return { updatedCount, total: quotations.length };
+  },
+});

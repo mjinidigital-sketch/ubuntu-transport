@@ -76,6 +76,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { migrateQuotationsAction } from "@/app/actions/documents";
 
 interface QuotationsClientProps {
   initialQuotations?: QuotationData[];
@@ -240,6 +241,28 @@ function QuotationsClientInner({
     } catch (error) {
       console.error("Failed to delete quotation:", error);
       toast.error(`Failed to delete quotation.`);
+    }
+  };
+
+  const handleMigrateQuotations = async () => {
+    const confirmed = window.confirm(
+      "This will add 14-day validity and default terms to all existing quotations without them. Continue?"
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const result = await migrateQuotationsAction();
+      if (result.success && result.result) {
+        toast.success(
+          `Successfully migrated ${result.result.updatedCount} of ${result.result.total} quotations.`
+        );
+      } else {
+        toast.error(result.error || "Failed to migrate quotations");
+      }
+    } catch (error) {
+      console.error("Failed to migrate quotations:", error);
+      toast.error("Failed to migrate quotations");
     }
   };
 
@@ -576,6 +599,14 @@ function QuotationsClientInner({
             <Button onClick={handleCreateNew} className="gap-1.5">
               <Plus className="w-4 h-4" />
               <span>Create Quotation</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleMigrateQuotations}
+              className="gap-1.5"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span>Migrate Existing</span>
             </Button>
           </div>
 

@@ -126,6 +126,15 @@ export function UbuntuQuotationPreview({
                 <p className="text-gray-400 text-xs">
                   {quotation.quotationDate ? formatDate(quotation.quotationDate) : ""}
                 </p>
+                {quotation.validUntil ? (
+                  <p className="text-gray-400 text-xs">
+                    Valid until: {formatDate(quotation.validUntil)}
+                  </p>
+                ) : quotation.quotationDate && (
+                  <p className="text-gray-400 text-xs">
+                    Valid until: {formatDate(new Date(new Date(quotation.quotationDate).getTime() + 14 * 24 * 60 * 60 * 1000))}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -241,19 +250,15 @@ export function UbuntuQuotationPreview({
               <h3 className="text-[9px] sm:text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1">
                 Terms &amp; Conditions
               </h3>
-              <ul className="list-disc pl-3 space-y-0.5 text-[8px] sm:text-[9px] text-gray-500">
-                <li>Accounts are due on demand.</li>
-                <li>
-                  A <strong>50% booking fee</strong> is required, with the
-                  remaining balance payable before boarding.
-                </li>
-                <li>
-                  Accepted payments: Cash, Cheque, Bank Transfer. KCB Bank:{" "}
-                  <strong>1350132330</strong> (Tai Ubuntu Logistics Ltd) |
-                  M-PESA Paybill: <strong>522533</strong>, Acc:{" "}
-                  <strong>8077526</strong>.
-                </li>
-              </ul>
+              {quotation.terms ? (
+                <p className="text-[8px] sm:text-[9px] text-gray-500 whitespace-pre-line">
+                  {quotation.terms}
+                </p>
+              ) : (
+                <p className="text-[8px] sm:text-[9px] text-gray-500 whitespace-pre-line">
+                  This quotation is valid for 14 days from the date of issue. Prices are subject to change without prior notice. Payment terms: 50% advance, 50% upon completion.
+                </p>
+              )}
 
               <div className="flex justify-between items-center mt-2">
                 <div className="relative w-16 sm:w-20">
