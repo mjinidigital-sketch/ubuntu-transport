@@ -20,6 +20,7 @@ export interface QuotationData {
   items: QuotationItem[];
   total: number;
   notes?: string;
+  terms?: string;
   status?: string;
   numberOfDays?: number;
   createdAt?: string | Date;
