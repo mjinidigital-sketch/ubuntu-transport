@@ -714,16 +714,34 @@ const schema = defineSchema({
         active: v.boolean(),
     }).index("by_user", ["userId"])
     .index("by_active", ["active"]),
-    // Quotations
+    // Quotations (matching ubuntu-invoices-main structure)
     quotations: defineTable({
         // Unique quotation number
         quotationNumber: v.string(),
-        // Client reference
-        clientId: v.id("clients"),
         // Date
-        quotationDate: v.number(),
+        date: v.string(), // YYYY-MM-DD
         // Valid until
-        validUntil: v.optional(v.number()),
+        dueDate: v.optional(v.string()), // YYYY-MM-DD
+        // From details
+        fromName: v.string(),
+        fromEmail: v.string(),
+        // To details
+        toName: v.string(),
+        toEmail: v.string(),
+        // Line items (matching reference structure)
+        items: v.array(v.object({
+            id: v.string(),
+            date: v.string(), // YYYY-MM-DD
+            pickupPaid: v.string(),
+            dropoffReturnTrip: v.string(),
+            amount: v.union(v.number(), v.string()),
+            numberOfDays: v.union(v.number(), v.string()),
+            status: v.string(),
+        })),
+        // Total
+        total: v.number(),
+        // Notes
+        notes: v.optional(v.string()),
         // Status
         status: v.union(
             v.literal("draft"),
@@ -732,88 +750,62 @@ const schema = defineSchema({
             v.literal("rejected"),
             v.literal("expired")
         ),
-        // Line items
-        items: v.array(v.object({
-            serviceId: v.optional(v.id("services")),
-            description: v.string(),
-            quantity: v.number(),
-            unitPrice: v.string(),
-            total: v.string(),
-            itemDate: v.optional(v.number()),
-        })),
-        // Subtotal, tax, discount, total
-        subtotal: v.string(),
-        taxRate: v.optional(v.number()),
-        taxAmount: v.optional(v.string()),
-        discountAmount: v.optional(v.string()),
-        total: v.string(),
-        // Notes
-        notes: v.optional(v.string()),
-        terms: v.optional(v.string()),
-        // Converted to invoice?
-        convertedToInvoiceId: v.optional(v.id("invoices")),
-        // Stamp & Signature
-        stampUrl: v.optional(v.string()),
-        signatureUrl: v.optional(v.string()),
-        signatoryName: v.optional(v.string()),
-        signatoryTitle: v.optional(v.string()),
-    }).index("by_client", ["clientId"])
+        // Number of days (for reference)
+        numberOfDays: v.optional(v.number()),
+        // Created/Updated timestamps
+        createdAt: v.optional(v.number()),
+        updatedAt: v.optional(v.number()),
+    }).index("by_number", ["quotationNumber"])
     .index("by_status", ["status"])
-    .index("by_date", ["quotationDate"])
-    .index("by_number", ["quotationNumber"]),
-    // Invoices
+    .index("by_date", ["date"]),
+    // Invoices (matching ubuntu-invoices-main structure)
     invoices: defineTable({
         // Unique invoice number
         invoiceNumber: v.string(),
-        // Client reference
-        clientId: v.id("clients"),
-        // From quotation?
-        quotationId: v.optional(v.id("quotations")),
         // Date
-        invoiceDate: v.number(),
+        date: v.string(), // YYYY-MM-DD
         // Due date
-        dueDate: v.optional(v.number()),
+        dueDate: v.optional(v.string()), // YYYY-MM-DD
+        // From details
+        fromName: v.string(),
+        fromEmail: v.string(),
+        // To details
+        toName: v.string(),
+        toEmail: v.string(),
+        // Line items (matching reference structure)
+        items: v.array(v.object({
+            id: v.string(),
+            description: v.string(),
+            quantity: v.union(v.number(), v.string()),
+            rate: v.union(v.number(), v.string()),
+            amount: v.number(),
+            numberOfDays: v.union(v.number(), v.string()),
+        })),
+        // Tax
+        taxRate: v.union(v.number(), v.string()),
+        taxAmount: v.number(),
+        // Subtotal and total
+        subtotal: v.number(),
+        total: v.number(),
+        // Notes
+        notes: v.optional(v.string()),
         // Status
         status: v.union(
             v.literal("draft"),
             v.literal("sent"),
             v.literal("paid"),
+            v.literal("partially_paid"),
             v.literal("overdue"),
             v.literal("cancelled")
         ),
-        // Line items
-        items: v.array(v.object({
-            serviceId: v.optional(v.id("services")),
-            description: v.string(),
-            quantity: v.number(),
-            unitPrice: v.string(),
-            total: v.string(),
-            itemDate: v.optional(v.number()),
-        })),
-        // Subtotal, tax, discount, total
-        subtotal: v.string(),
-        taxRate: v.optional(v.number()),
-        taxAmount: v.optional(v.string()),
-        discountAmount: v.optional(v.string()),
-        total: v.string(),
-        // Payment tracking
-        paidAmount: v.optional(v.string()),
-        balanceDue: v.optional(v.string()),
-        // Notes
-        notes: v.optional(v.string()),
-        terms: v.optional(v.string()),
-        // Template used
-        templateId: v.optional(v.id("invoiceTemplates")),
-        // Stamp & Signature
-        stampUrl: v.optional(v.string()),
-        signatureUrl: v.optional(v.string()),
-        signatoryName: v.optional(v.string()),
-        signatoryTitle: v.optional(v.string()),
-    }).index("by_client", ["clientId"])
+        // Number of days (for reference)
+        numberOfDays: v.optional(v.number()),
+        // Created/Updated timestamps
+        createdAt: v.optional(v.number()),
+        updatedAt: v.optional(v.number()),
+    }).index("by_number", ["invoiceNumber"])
     .index("by_status", ["status"])
-    .index("by_date", ["invoiceDate"])
-    .index("by_number", ["invoiceNumber"])
-    .index("by_quotation", ["quotationId"]),
+    .index("by_date", ["date"]),
     // Receipts
     receipts: defineTable({
         // Unique receipt number

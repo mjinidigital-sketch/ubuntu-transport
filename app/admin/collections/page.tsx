@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { LegacyColumnDef } from "@tanstack/react-table/legacy";
+import type { ColumnDef } from "@tanstack/react-table";
 import {
   Trash2,
   Edit,
@@ -54,8 +54,8 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   getFilteredRowModel,
-  useLegacyTable,
-} from "@tanstack/react-table/legacy";
+  useReactTable,
+} from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 
 type SortingState = Array<{
@@ -310,7 +310,7 @@ function AdminCollectionsContent() {
     return data;
   }, [collections, statusFilter]);
 
-  const columns: LegacyColumnDef<CollectionRow>[] = useMemo(
+  const columns: ColumnDef<CollectionRow>[] = useMemo(
     () => [
       {
         id: "icon_name",
@@ -421,7 +421,7 @@ function AdminCollectionsContent() {
     [router]
   );
 
-  const table = useLegacyTable({
+  const table = useReactTable({
     data: filteredData,
     columns,
     onSortingChange: setSorting,

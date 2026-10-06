@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { SquaresFourIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, GearIcon, QuestionIcon, MagnifyingGlassIcon, DatabaseIcon, ChartLineIcon, FileIcon, CommandIcon, LayoutIcon, ChatCircleIcon, ClipboardTextIcon, NotePencilIcon, PaletteIcon, ReceiptIcon, CurrencyDollarIcon, InvoiceIcon } from "@phosphor-icons/react"
+import { SquaresFourIcon, ListIcon, ChartBarIcon, FolderIcon, UsersIcon, CameraIcon, FileTextIcon, GearIcon, QuestionIcon, MagnifyingGlassIcon, DatabaseIcon, ChartLineIcon, FileIcon, CommandIcon, LayoutIcon, ChatCircleIcon, ClipboardTextIcon, NotePencilIcon, PaletteIcon, CurrencyDollarIcon, InvoiceIcon } from "@phosphor-icons/react"
 
 const data = {
   user: {
@@ -125,14 +125,6 @@ const data = {
         {
           title: "Invoices",
           url: "/admin/invoices",
-        },
-        {
-          title: "Receipts",
-          url: "/admin/receipts",
-        },
-        {
-          title: "Invoice Templates",
-          url: "/admin/invoice-templates",
         },
       ],
     },

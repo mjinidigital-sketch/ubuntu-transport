@@ -158,6 +158,7 @@ export function CorporateDocumentViewer({
     const printFrame = window.open("", "_blank", "width=900,height=1100");
 
     if (printFrame) {
+      const baseUrl = window.location.origin;
       printFrame.document.open();
       printFrame.document.write(`
         <!DOCTYPE html>
@@ -165,6 +166,7 @@ export function CorporateDocumentViewer({
           <head>
             <title>${document.type.toUpperCase()} #${document.documentNumber}</title>
             <meta charset="utf-8" />
+            <base href="${baseUrl}/">
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -190,6 +192,10 @@ export function CorporateDocumentViewer({
                 margin: 0 auto;
                 background: #ffffff !important;
               }
+              img {
+                max-width: 100%;
+                height: auto;
+              }
             </style>
           </head>
           <body>
@@ -198,11 +204,38 @@ export function CorporateDocumentViewer({
             </div>
             <script>
               window.onload = function() {
-                setTimeout(function() {
-                  window.focus();
-                  window.print();
-                  window.close();
-                }, 500);
+                // Preload all images before printing
+                const images = document.querySelectorAll('img');
+                let loadedCount = 0;
+                const totalImages = images.length;
+
+                function checkAllLoaded() {
+                  loadedCount++;
+                  if (loadedCount === totalImages) {
+                    setTimeout(function() {
+                      window.focus();
+                      window.print();
+                      window.close();
+                    }, 500);
+                  }
+                }
+
+                if (totalImages === 0) {
+                  setTimeout(function() {
+                    window.focus();
+                    window.print();
+                    window.close();
+                  }, 500);
+                } else {
+                  images.forEach(img => {
+                    if (img.complete) {
+                      checkAllLoaded();
+                    } else {
+                      img.onload = checkAllLoaded;
+                      img.onerror = checkAllLoaded;
+                    }
+                  });
+                }
               };
             </script>
           </body>

@@ -14,18 +14,18 @@ export const getCurrentUserRole = getCurrentUserRoleFromUsers;
 
 export const getServices = cache(async () => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.listServices, {}, { token });
+    return await fetchQuery(api.services.listServices, {}, { token });
 });
 
 export const getService = cache(async (id: string) => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.getService, { id: id as any }, { token });
+    return await fetchQuery(api.services.getService, { id: id as any }, { token });
 });
 
 export async function createServiceAction(values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.createService, values, { token });
+        await fetchMutation(api.services.createService, values, { token });
         revalidatePath("/admin/services");
         return { success: true };
     } catch (error) {
@@ -37,7 +37,7 @@ export async function createServiceAction(values: any) {
 export async function updateServiceAction(id: string, values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.updateService, { id: id as any, ...values }, { token });
+        await fetchMutation(api.services.updateService, { id: id as any, ...values }, { token });
         revalidatePath("/admin/services");
         return { success: true };
     } catch (error) {
@@ -49,7 +49,7 @@ export async function updateServiceAction(id: string, values: any) {
 export async function deleteServiceAction(id: string) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.deleteService, { id: id as any }, { token });
+        await fetchMutation(api.services.deleteService, { id: id as any }, { token });
         revalidatePath("/admin/services");
         return { success: true };
     } catch (error) {
@@ -62,18 +62,18 @@ export async function deleteServiceAction(id: string) {
 
 export const getClients = cache(async () => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.listClients, {}, { token });
+    return await fetchQuery(api.clients.listClients, {}, { token });
 });
 
 export const getClient = cache(async (id: string) => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.getClient, { id: id as any }, { token });
+    return await fetchQuery(api.clients.getClient, { id: id as any }, { token });
 });
 
 export async function createClientAction(values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.createClient, values, { token });
+        await fetchMutation(api.clients.createClient, values, { token });
         revalidatePath("/admin/clients");
         return { success: true };
     } catch (error) {
@@ -85,7 +85,7 @@ export async function createClientAction(values: any) {
 export async function updateClientAction(id: string, values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.updateClient, { id: id as any, ...values }, { token });
+        await fetchMutation(api.clients.updateClient, { id: id as any, ...values }, { token });
         revalidatePath("/admin/clients");
         return { success: true };
     } catch (error) {
@@ -97,7 +97,7 @@ export async function updateClientAction(id: string, values: any) {
 export async function deleteClientAction(id: string) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.deleteClient, { id: id as any }, { token });
+        await fetchMutation(api.clients.deleteClient, { id: id as any }, { token });
         revalidatePath("/admin/clients");
         return { success: true };
     } catch (error) {
@@ -110,18 +110,18 @@ export async function deleteClientAction(id: string) {
 
 export const getQuotations = cache(async () => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.listQuotations, {}, { token });
+    return await fetchQuery(api.quotations.listQuotations, {}, { token });
 });
 
 export const getQuotation = cache(async (id: string) => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.getQuotation, { id: id as any }, { token });
+    return await fetchQuery(api.quotations.getQuotation, { id: id as any }, { token });
 });
 
 export async function generateQuotationNumberAction() {
     const token = await convexAuthNextjsToken();
     try {
-        const number = await fetchAction(api.documents.generateQuotationNumber, {}, { token });
+        const number = await fetchQuery(api.quotations.generateQuotationNumber, {}, { token });
         return { success: true, number };
     } catch (error) {
         console.error("Failed to generate quotation number:", error);
@@ -132,7 +132,7 @@ export async function generateQuotationNumberAction() {
 export async function createQuotationAction(values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.createQuotation, values, { token });
+        await fetchMutation(api.quotations.createQuotation, values, { token });
         revalidatePath("/admin/quotations");
         return { success: true };
     } catch (error) {
@@ -144,7 +144,7 @@ export async function createQuotationAction(values: any) {
 export async function updateQuotationAction(id: string, values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.updateQuotation, { id: id as any, ...values }, { token });
+        await fetchMutation(api.quotations.updateQuotation, { id: id as any, ...values }, { token });
         revalidatePath("/admin/quotations");
         return { success: true };
     } catch (error) {
@@ -156,7 +156,7 @@ export async function updateQuotationAction(id: string, values: any) {
 export async function deleteQuotationAction(id: string) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.deleteQuotation, { id: id as any }, { token });
+        await fetchMutation(api.quotations.deleteQuotation, { id: id as any }, { token });
         revalidatePath("/admin/quotations");
         return { success: true };
     } catch (error) {
@@ -169,18 +169,18 @@ export async function deleteQuotationAction(id: string) {
 
 export const getInvoices = cache(async () => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.listInvoices, {}, { token });
+    return await fetchQuery(api.invoices.listInvoices, {}, { token });
 });
 
 export const getInvoice = cache(async (id: string) => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.getInvoice, { id: id as any }, { token });
+    return await fetchQuery(api.invoices.getInvoice, { id: id as any }, { token });
 });
 
 export async function generateInvoiceNumberAction() {
     const token = await convexAuthNextjsToken();
     try {
-        const number = await fetchAction(api.documents.generateInvoiceNumber, {}, { token });
+        const number = await fetchQuery(api.invoices.generateInvoiceNumber, {}, { token });
         return { success: true, number };
     } catch (error) {
         console.error("Failed to generate invoice number:", error);
@@ -191,7 +191,7 @@ export async function generateInvoiceNumberAction() {
 export async function createInvoiceAction(values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.createInvoice, values, { token });
+        await fetchMutation(api.invoices.createInvoice, values, { token });
         revalidatePath("/admin/invoices");
         return { success: true };
     } catch (error) {
@@ -203,7 +203,7 @@ export async function createInvoiceAction(values: any) {
 export async function updateInvoiceAction(id: string, values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.updateInvoice, { id: id as any, ...values }, { token });
+        await fetchMutation(api.invoices.updateInvoice, { id: id as any, ...values }, { token });
         revalidatePath("/admin/invoices");
         return { success: true };
     } catch (error) {
@@ -215,7 +215,7 @@ export async function updateInvoiceAction(id: string, values: any) {
 export async function deleteInvoiceAction(id: string) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.deleteInvoice, { id: id as any }, { token });
+        await fetchMutation(api.invoices.deleteInvoice, { id: id as any }, { token });
         revalidatePath("/admin/invoices");
         return { success: true };
     } catch (error) {
@@ -228,18 +228,18 @@ export async function deleteInvoiceAction(id: string) {
 
 export const getReceipts = cache(async () => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.listReceipts, {}, { token });
+    return await fetchQuery(api.receipts.listReceipts, {}, { token });
 });
 
 export const getReceipt = cache(async (id: string) => {
     const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.getReceipt, { id: id as any }, { token });
+    return await fetchQuery(api.receipts.getReceipt, { id: id as any }, { token });
 });
 
 export async function generateReceiptNumberAction() {
     const token = await convexAuthNextjsToken();
     try {
-        const number = await fetchAction(api.documents.generateReceiptNumber, {}, { token });
+        const number = await fetchQuery(api.receipts.generateReceiptNumber, {}, { token });
         return { success: true, number };
     } catch (error) {
         console.error("Failed to generate receipt number:", error);
@@ -250,7 +250,7 @@ export async function generateReceiptNumberAction() {
 export async function createReceiptAction(values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.createReceipt, values, { token });
+        await fetchMutation(api.receipts.createReceipt, values, { token });
         revalidatePath("/admin/receipts");
         revalidatePath("/admin/invoices");
         return { success: true };
@@ -263,7 +263,7 @@ export async function createReceiptAction(values: any) {
 export async function updateReceiptAction(id: string, values: any) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.updateReceipt, { id: id as any, ...values }, { token });
+        await fetchMutation(api.receipts.updateReceipt, { id: id as any, ...values }, { token });
         revalidatePath("/admin/receipts");
         return { success: true };
     } catch (error) {
@@ -275,59 +275,11 @@ export async function updateReceiptAction(id: string, values: any) {
 export async function deleteReceiptAction(id: string) {
     const token = await convexAuthNextjsToken();
     try {
-        await fetchMutation(api.documents.deleteReceipt, { id: id as any }, { token });
+        await fetchMutation(api.receipts.deleteReceipt, { id: id as any }, { token });
         revalidatePath("/admin/receipts");
         return { success: true };
     } catch (error) {
         console.error("Failed to delete receipt:", error);
         return { error: "Failed to delete receipt" };
-    }
-}
-
-// ==================== INVOICE TEMPLATES ====================
-
-export const getInvoiceTemplates = cache(async () => {
-    const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.listInvoiceTemplates, {}, { token });
-});
-
-export const getInvoiceTemplate = cache(async (id: string) => {
-    const token = await convexAuthNextjsToken();
-    return await fetchQuery(api.documents.getInvoiceTemplate, { id: id as any }, { token });
-});
-
-export async function createInvoiceTemplateAction(values: any) {
-    const token = await convexAuthNextjsToken();
-    try {
-        await fetchMutation(api.documents.createInvoiceTemplate, values, { token });
-        revalidatePath("/admin/invoice-templates");
-        return { success: true };
-    } catch (error) {
-        console.error("Failed to create invoice template:", error);
-        return { error: "Failed to create invoice template" };
-    }
-}
-
-export async function updateInvoiceTemplateAction(id: string, values: any) {
-    const token = await convexAuthNextjsToken();
-    try {
-        await fetchMutation(api.documents.updateInvoiceTemplate, { id: id as any, ...values }, { token });
-        revalidatePath("/admin/invoice-templates");
-        return { success: true };
-    } catch (error) {
-        console.error("Failed to update invoice template:", error);
-        return { error: "Failed to update invoice template" };
-    }
-}
-
-export async function deleteInvoiceTemplateAction(id: string) {
-    const token = await convexAuthNextjsToken();
-    try {
-        await fetchMutation(api.documents.deleteInvoiceTemplate, { id: id as any }, { token });
-        revalidatePath("/admin/invoice-templates");
-        return { success: true };
-    } catch (error) {
-        console.error("Failed to delete invoice template:", error);
-        return { error: "Failed to delete invoice template" };
     }
 }

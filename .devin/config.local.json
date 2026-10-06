@@ -9,7 +9,8 @@
       "Exec(npm run)",
       "Exec(ls components)",
       "Exec(ls)",
-      "Exec(Get-Content)"
+      "Exec(Get-Content)",
+      "Exec(cp)"
     ]
   }
 }

@@ -31,6 +31,8 @@ import { FormWizard } from "@/components/admin/forms/FormWizard";
 import { LineItemsInput } from "@/components/admin/forms/LineItemsInput";
 import { InlineClientCreator } from "@/components/admin/forms/InlineClientCreator";
 import { QuotationPreview } from "./QuotationPreview";
+import { UbuntuQuotationPreview } from "@/components/admin/quotations/UbuntuQuotationPreview";
+import { getOrganization } from "@/app/actions/organization";
 
 interface QuotationFormSheetProps {
   quotation?: QuotationRow | null;
@@ -62,6 +64,8 @@ export function QuotationFormSheet({
   const [isGeneratingNumber, setIsGeneratingNumber] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
+  const [showUbuntuPreview, setShowUbuntuPreview] = useState(false);
+  const [organization, setOrganization] = useState<any>(null);
   const [localClients, setLocalClients] = useState(clients);
   const [localServices, setLocalServices] = useState(services);
   const [formData, setFormData] = useState({
@@ -74,6 +78,18 @@ export function QuotationFormSheet({
     notes: "",
     terms: "",
   });
+
+  useEffect(() => {
+    async function fetchOrg() {
+      try {
+        const org = await getOrganization();
+        setOrganization(org);
+      } catch (error) {
+        console.error("Failed to fetch organization:", error);
+      }
+    }
+    fetchOrg();
+  }, []);
 
   useEffect(() => {
     if (quotation && !isCreating) {
@@ -104,6 +120,7 @@ export function QuotationFormSheet({
     }
     setCurrentStep(0);
     setShowPreview(false);
+    setShowUbuntuPreview(false);
     setLocalClients(clients);
     setLocalServices(services);
   }, [quotation, isCreating, open, clients, services]);
@@ -189,9 +206,15 @@ export function QuotationFormSheet({
     }
   };
 
+  const handleShowUbuntuPreview = () => {
+    setShowUbuntuPreview(true);
+  };
+
   const handlePrevious = () => {
     if (showPreview) {
       setShowPreview(false);
+    } else if (showUbuntuPreview) {
+      setShowUbuntuPreview(false);
     } else {
       setCurrentStep(currentStep - 1);
     }
@@ -217,14 +240,27 @@ export function QuotationFormSheet({
       <Sheet open={open} onOpenChange={onClose}>
         <SheetContent side="right" className="overflow-hidden max-w-[90vw] md:!max-w-[50%] w-[80%] md:!w-1/2">
           <SheetHeader>
-            <SheetTitle>
-              {isCreating ? "Create New Quotation" : "Edit Quotation"}
-            </SheetTitle>
-            <SheetDescription>
-              {isCreating
-                ? "Create a new quotation for a client."
-                : "Update the quotation details."}
-            </SheetDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <SheetTitle>
+                  {isCreating ? "Create New Quotation" : "Edit Quotation"}
+                </SheetTitle>
+                <SheetDescription>
+                  {isCreating
+                    ? "Create a new quotation for a client."
+                    : "Update the quotation details."}
+                </SheetDescription>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleShowUbuntuPreview}
+                className="hidden md:flex"
+              >
+                Preview Ubuntu Style
+              </Button>
+            </div>
           </SheetHeader>
 
           <FormWizard
@@ -449,6 +485,31 @@ export function QuotationFormSheet({
         open={showPreview}
         onClose={() => setShowPreview(false)}
       />
+
+      {/* Ubuntu Style Preview */}
+      {showUbuntuPreview && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="w-full max-w-6xl h-full flex flex-col bg-white rounded-lg overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-semibold">Ubuntu Style Preview</h2>
+              <Button variant="outline" size="sm" onClick={() => setShowUbuntuPreview(false)}>
+                Close
+              </Button>
+            </div>
+            <div className="flex-1 overflow-auto">
+              <UbuntuQuotationPreview
+                quotation={previewQuotation as any}
+                organization={organization}
+                onBack={() => setShowUbuntuPreview(false)}
+                onDownloadComplete={() => {
+                  setShowUbuntuPreview(false);
+                  toast.success("Quotation saved successfully");
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

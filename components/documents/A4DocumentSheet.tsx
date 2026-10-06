@@ -59,7 +59,7 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
       fontFamily = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
     } = customization;
 
-    const orgLogo = logoSource === "organization" ? organization?.logo : logoUrl;
+    const orgLogo = logoSource === "organization" ? organization?.logo : logoUrl || "/ubuntu-logo.webp";
     const orgName = organization?.name || "Corporate Enterprise Ltd.";
     const orgEmail = organization?.email || "Ben@ubuntulogistics.co.ke";
     const client = document.client;
@@ -131,9 +131,10 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
         {showLogo && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 z-0">
             <img
-              src="/ubuntu-footer-logo.webp"
+              src="/ubuntu-logo.webp"
               alt="Watermark"
               className="w-48 h-48 object-contain"
+              crossOrigin="anonymous"
             />
           </div>
         )}
@@ -143,17 +144,12 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
             {/* Logo and Company Details */}
             <div className="flex items-start gap-4">
               {showLogo && (
-                orgLogo ? (
-                  <img
-                    src={orgLogo}
-                    alt={orgName}
-                    className="h-18 max-w-[95px] object-contain shrink-0"
-                  />
-                ) : (
-                  <div className="h-16 w-16 rounded-lg text-white flex items-center justify-center font-black text-sm tracking-wider shadow-sm" style={{ backgroundColor: primaryColor }}>
-                    {orgName.substring(0, 2).toUpperCase()}
-                  </div>
-                )
+                <img
+                  src={orgLogo || "/ubuntu-logo.webp"}
+                  alt={orgName}
+                  className="h-18 max-w-[95px] object-contain shrink-0"
+                  crossOrigin="anonymous"
+                />
               )}
               <div>
                 <h2 className="text-xl font-black tracking-tight leading-tight" style={{ color: primaryColor }}>
@@ -427,7 +423,7 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
                   referenceNumber={document.documentNumber}
                   color="#dc2626"
                   useLogoAsWatermark={true}
-                  logoUrl="/ubuntu-footer-logo.webp"
+                  logoUrl="/ubuntu-logo.webp"
                 />
               )}
             </div>
@@ -491,9 +487,10 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
         {showLogo && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 z-0">
             <img
-              src="/ubuntu-footer-logo.webp"
+              src="/ubuntu-logo.webp"
               alt="Watermark"
               className="w-48 h-48 object-contain"
+              crossOrigin="anonymous"
             />
           </div>
         )}
@@ -501,16 +498,13 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div>
-              {showLogo && orgLogo ? (
+              {showLogo && (
                 <img
-                  src={orgLogo}
+                  src={orgLogo || "/ubuntu-logo.webp"}
                   alt={orgName}
                   className="h-7 max-w-[100px] object-contain mb-2"
+                  crossOrigin="anonymous"
                 />
-              ) : (
-                <div className="text-xl font-black tracking-tight text-slate-900 mb-1">
-                  {orgName}
-                </div>
               )}
               <h1 className="text-4xl font-black tracking-tight text-slate-950">
                 {documentTitle}
@@ -647,7 +641,7 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
                   referenceNumber={document.documentNumber}
                   color="#dc2626"
                   useLogoAsWatermark={true}
-                  logoUrl="/ubuntu-footer-logo.webp"
+                  logoUrl="/ubuntu-logo.webp"
                 />
               )}
             </div>
@@ -714,9 +708,10 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
         {showLogo && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-5 z-0">
             <img
-              src="/ubuntu-footer-logo.webp"
+              src="/ubuntu-logo.webp"
               alt="Watermark"
               className="w-48 h-48 object-contain"
+              crossOrigin="anonymous"
             />
           </div>
         )}
@@ -724,16 +719,13 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div>
-              {showLogo && orgLogo ? (
+              {showLogo && (
                 <img
-                  src={orgLogo}
+                  src={orgLogo || "/ubuntu-logo.webp"}
                   alt={orgName}
                   className="h-7 max-w-[100px] object-contain mb-2"
+                  crossOrigin="anonymous"
                 />
-              ) : (
-                <div className="text-xl font-black tracking-tight text-slate-900 mb-1">
-                  {orgName}
-                </div>
               )}
               <h1 className="text-4xl font-black tracking-tight text-slate-950">
                 {documentTitle}
@@ -870,7 +862,7 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
                   referenceNumber={document.documentNumber}
                   color="#dc2626"
                   useLogoAsWatermark={true}
-                  logoUrl="/ubuntu-footer-logo.webp"
+                  logoUrl="/ubuntu-logo.webp"
                 />
               )}
             </div>

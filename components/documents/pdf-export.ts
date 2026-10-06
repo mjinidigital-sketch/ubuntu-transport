@@ -54,12 +54,14 @@ export async function exportElementToPdf(
     }, 500);
 
     pdfFrame.document.open();
+    const baseUrl = window.location.origin;
     pdfFrame.document.write(`
       <!DOCTYPE html>
       <html>
         <head>
           <title>${cleanFilename}</title>
           <meta charset="utf-8" />
+          <base href="${baseUrl}/">
           <link rel="preconnect" href="https://fonts.googleapis.com">
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
@@ -85,6 +87,10 @@ export async function exportElementToPdf(
               background: #ffffff !important;
               margin: 0 auto;
             }
+            img {
+              max-width: 100%;
+              height: auto;
+            }
           </style>
         </head>
         <body>
@@ -94,44 +100,80 @@ export async function exportElementToPdf(
           <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
           <script>
             window.onload = function() {
-              setTimeout(function() {
-                const element = document.getElementById('pdf-container');
-                html2pdf()
-                  .set({
-                    margin: 0,
-                    filename: '${cleanFilename}',
-                    image: { type: 'jpeg', quality: 0.85 },
-                    html2canvas: {
-                      scale: 1.5,
-                      useCORS: true,
-                      allowTaint: true,
-                      logging: false,
-                      backgroundColor: '#ffffff',
-                      width: 794,
-                      height: 1123,
-                    },
-                    jsPDF: {
-                      unit: 'mm',
-                      format: 'a4',
-                      orientation: 'portrait',
-                      compress: true,
-                    },
-                    pagebreak: {
-                      mode: ['avoid-all', 'css', 'legacy'],
-                    },
-                  })
-                  .from(element)
-                  .save()
-                  .then(function() {
-                    window.opener.postMessage({ type: 'PDF_SUCCESS' }, '*');
-                    window.close();
-                  })
-                  .catch(function(err) {
-                    console.error('PDF generation failed:', err);
-                    window.opener.postMessage({ type: 'PDF_ERROR', message: err.message || 'PDF generation failed' }, '*');
-                    window.close();
-                  });
-              }, 500);
+              // Preload all images before generating PDF
+              const images = document.querySelectorAll('img');
+              let loadedCount = 0;
+              const totalImages = images.length;
+
+              function checkAllLoaded() {
+                loadedCount++;
+                if (loadedCount === totalImages) {
+                  generatePDF();
+                }
+              }
+
+              function generatePDF() {
+                setTimeout(function() {
+                  const element = document.getElementById('pdf-container');
+                  html2pdf()
+                    .set({
+                      margin: 0,
+                      filename: '${cleanFilename}',
+                      image: { type: 'jpeg', quality: 0.85 },
+                      html2canvas: {
+                        scale: 1.5,
+                        useCORS: true,
+                        allowTaint: true,
+                        logging: false,
+                        backgroundColor: '#ffffff',
+                        width: 794,
+                        height: 1123,
+                        onclone: function(clonedDoc) {
+                          // Ensure images are loaded in cloned document
+                          const clonedImages = clonedDoc.querySelectorAll('img');
+                          clonedImages.forEach(img => {
+                            if (!img.complete) {
+                              img.crossOrigin = 'anonymous';
+                            }
+                          });
+                        }
+                      },
+                      jsPDF: {
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'portrait',
+                        compress: true,
+                      },
+                      pagebreak: {
+                        mode: ['avoid-all', 'css', 'legacy'],
+                      },
+                    })
+                    .from(element)
+                    .save()
+                    .then(function() {
+                      window.opener.postMessage({ type: 'PDF_SUCCESS' }, '*');
+                      window.close();
+                    })
+                    .catch(function(err) {
+                      console.error('PDF generation failed:', err);
+                      window.opener.postMessage({ type: 'PDF_ERROR', message: err.message || 'PDF generation failed' }, '*');
+                      window.close();
+                    });
+                }, 500);
+              }
+
+              if (totalImages === 0) {
+                generatePDF();
+              } else {
+                images.forEach(img => {
+                  if (img.complete) {
+                    checkAllLoaded();
+                  } else {
+                    img.onload = checkAllLoaded;
+                    img.onerror = checkAllLoaded; // Continue even if image fails to load
+                  }
+                });
+              }
             };
           </script>
         </body>

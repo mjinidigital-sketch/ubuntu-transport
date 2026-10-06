@@ -89,6 +89,7 @@ export function DocumentSignature({
                 src={signatureImageUrl}
                 alt="Authorized Signature"
                 className="max-h-16 max-w-full object-contain filter contrast-125"
+                crossOrigin="anonymous"
               />
             ) : (
               /* Realistic Ink Calligraphy Vector Signature */

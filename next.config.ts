@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  serverExternalPackages: ["html2pdf.js", "html2canvas", "jspdf"],
+  serverExternalPackages: ["html2pdf.js", "html2canvas", "html2canvas-pro", "jspdf"],
 
   images: {
     unoptimized: true,

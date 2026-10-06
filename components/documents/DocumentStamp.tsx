@@ -39,13 +39,15 @@ export function DocumentStamp({
           <img
             src={logoUrl}
             alt="Watermark"
-            className="absolute inset-0 w-full h-full object-contain opacity-20"
+            className="absolute inset-0 w-24 h-24 object-contain opacity-20 mx-auto"
+            crossOrigin="anonymous"
           />
         )}
         <img
           src={stampImageUrl}
           alt="Official Stamp"
           className="w-32 h-32 object-contain opacity-90 drop-shadow-sm filter contrast-125"
+          crossOrigin="anonymous"
         />
       </div>
     );

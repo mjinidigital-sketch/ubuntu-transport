@@ -1,6 +1,6 @@
 "use client";
 
-import type { LegacyColumnDef } from "@tanstack/react-table/legacy";
+import type { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +44,7 @@ export function getColumns({
     currentUserRole,
     onEditRole,
     onDelete,
-}: ColumnsProps): LegacyColumnDef<UserRow, any>[] {
+}: ColumnsProps): ColumnDef<UserRow, any>[] {
     const canManage = currentUserRole && ADMIN_ROLES.includes(currentUserRole);
 
     return [

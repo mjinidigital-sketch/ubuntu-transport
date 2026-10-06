@@ -31,6 +31,8 @@ import { FormWizard } from "@/components/admin/forms/FormWizard";
 import { LineItemsInput } from "@/components/admin/forms/LineItemsInput";
 import { InlineClientCreator } from "@/components/admin/forms/InlineClientCreator";
 import { InvoicePreview } from "./InvoicePreview";
+import { UbuntuInvoicePreview } from "@/components/admin/invoices/UbuntuInvoicePreview";
+import { getOrganization } from "@/app/actions/organization";
 
 interface InvoiceFormSheetProps {
   invoice?: InvoiceRow | null;
@@ -65,6 +67,8 @@ export function InvoiceFormSheet({
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
+  const [showUbuntuPreview, setShowUbuntuPreview] = useState(false);
+  const [organization, setOrganization] = useState<any>(null);
   const [localClients, setLocalClients] = useState(clients);
   const [localServices, setLocalServices] = useState(services);
   const [formData, setFormData] = useState({
@@ -80,6 +84,18 @@ export function InvoiceFormSheet({
     terms: "",
     templateId: "" as string,
   });
+
+  useEffect(() => {
+    async function fetchOrg() {
+      try {
+        const org = await getOrganization();
+        setOrganization(org);
+      } catch (error) {
+        console.error("Failed to fetch organization:", error);
+      }
+    }
+    fetchOrg();
+  }, []);
 
   useEffect(() => {
     if (invoice && !isCreating) {
@@ -116,6 +132,7 @@ export function InvoiceFormSheet({
     }
     setCurrentStep(0);
     setShowPreview(false);
+    setShowUbuntuPreview(false);
     setLocalClients(clients);
     setLocalServices(services);
   }, [invoice, isCreating, open, clients, services]);
@@ -206,9 +223,15 @@ export function InvoiceFormSheet({
     }
   };
 
+  const handleShowUbuntuPreview = () => {
+    setShowUbuntuPreview(true);
+  };
+
   const handlePrevious = () => {
     if (showPreview) {
       setShowPreview(false);
+    } else if (showUbuntuPreview) {
+      setShowUbuntuPreview(false);
     } else {
       setCurrentStep(currentStep - 1);
     }
@@ -235,14 +258,27 @@ export function InvoiceFormSheet({
       <Sheet open={open} onOpenChange={onClose}>
         <SheetContent side="right" className="overflow-y-auto max-w-[95vw] md:!max-w-[85%] w-[95%] md:!w-[85%] lg:!max-w-[75%] lg:!w-[75%]">
           <SheetHeader className="mb-6">
-            <SheetTitle>
-              {isCreating ? "Create New Invoice" : "Edit Invoice"}
-            </SheetTitle>
-            <SheetDescription>
-              {isCreating
-                ? "Create a new invoice for a client."
-                : "Update the invoice details."}
-            </SheetDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <SheetTitle>
+                  {isCreating ? "Create New Invoice" : "Edit Invoice"}
+                </SheetTitle>
+                <SheetDescription>
+                  {isCreating
+                    ? "Create a new invoice for a client."
+                    : "Update the invoice details."}
+                </SheetDescription>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleShowUbuntuPreview}
+                className="hidden md:flex"
+              >
+                Preview Ubuntu Style
+              </Button>
+            </div>
           </SheetHeader>
 
           <FormWizard
@@ -503,6 +539,31 @@ export function InvoiceFormSheet({
         open={showPreview}
         onClose={() => setShowPreview(false)}
       />
+
+      {/* Ubuntu Style Preview */}
+      {showUbuntuPreview && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="w-full max-w-6xl h-full flex flex-col bg-white rounded-lg overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-semibold">Ubuntu Style Preview</h2>
+              <Button variant="outline" size="sm" onClick={() => setShowUbuntuPreview(false)}>
+                Close
+              </Button>
+            </div>
+            <div className="flex-1 overflow-auto">
+              <UbuntuInvoicePreview
+                invoice={previewInvoice as any}
+                organization={organization}
+                onBack={() => setShowUbuntuPreview(false)}
+                onDownloadComplete={() => {
+                  setShowUbuntuPreview(false);
+                  toast.success("Invoice saved successfully");
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

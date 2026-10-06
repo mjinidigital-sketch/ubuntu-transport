@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import {
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useLegacyTable,
-} from "@tanstack/react-table/legacy";
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
 
 type ColumnFiltersState = Array<{
@@ -76,7 +76,7 @@ export function ServicesDataTable({ data, currentUserRole }: ServicesDataTablePr
         },
     });
 
-    const table = useLegacyTable({
+    const table = useReactTable({
         data,
         columns,
         onSortingChange: setSorting,

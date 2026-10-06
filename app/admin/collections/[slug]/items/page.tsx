@@ -49,14 +49,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { LegacyColumnDef } from "@tanstack/react-table/legacy";
+import type { ColumnDef } from "@tanstack/react-table";
 import {
   getCoreRowModel,
   getSortedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
-  useLegacyTable,
-} from "@tanstack/react-table/legacy";
+  useReactTable,
+} from "@tanstack/react-table";
 import { flexRender, type RowSelectionState } from "@tanstack/react-table";
 import { ItemFormSheet, ItemFormData } from "@/components/admin/item-form-sheet";
 
@@ -250,7 +250,7 @@ function AdminCollectionItemsContent() {
   }, [items, statusFilter]);
 
   // ─── Table Columns Definition ───────────────────────────────────────────────
-  const columns: LegacyColumnDef<ItemRow>[] = useMemo(
+  const columns: ColumnDef<ItemRow>[] = useMemo(
     () => [
       // Select Checkbox Column
       {
@@ -518,7 +518,7 @@ function AdminCollectionItemsContent() {
   );
 
   // ─── TanStack Table Instance ────────────────────────────────────────────────
-  const table = useLegacyTable({
+  const table = useReactTable({
     data: filteredData,
     columns,
     onSortingChange: setSorting,
