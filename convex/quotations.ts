@@ -134,9 +134,13 @@ export const migrateQuotationsWithDefaults = mutation({
     for (const quotation of quotations) {
       const updates: any = {};
 
-      // Add validUntil if missing (14 days from date)
-      if (!quotation.validUntil && quotation.date) {
-        const quotationDate = new Date(quotation.date);
+      // Add validUntil if missing (14 days from quotationDate or date)
+      if (!quotation.validUntil) {
+        const quotationDate = quotation.quotationDate
+          ? new Date(quotation.quotationDate)
+          : quotation.date
+          ? new Date(quotation.date)
+          : new Date();
         const validUntilDate = new Date(quotationDate);
         validUntilDate.setDate(quotationDate.getDate() + 14);
         updates.validUntil = validUntilDate.getTime();

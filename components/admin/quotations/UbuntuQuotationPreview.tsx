@@ -255,9 +255,11 @@ export function UbuntuQuotationPreview({
                   {quotation.terms}
                 </p>
               ) : (
-                <p className="text-[8px] sm:text-[9px] text-gray-500 whitespace-pre-line">
-                  This quotation is valid for 14 days from the date of issue. Prices are subject to change without prior notice. Payment terms: 50% advance, 50% upon completion.
-                </p>
+                <ul className="list-disc pl-3 space-y-0.5 text-[8px] sm:text-[9px] text-gray-500">
+                  <li>This quotation is valid for 14 days from the date of issue.</li>
+                  <li>Prices are subject to change without prior notice.</li>
+                  <li>Payment terms: 50% advance, 50% upon completion.</li>
+                </ul>
               )}
 
               <div className="flex justify-between items-center mt-2">

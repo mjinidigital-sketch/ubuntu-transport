@@ -250,16 +250,18 @@ export function QuotationDocument({
           <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
             Terms &amp; Conditions
           </h3>
-          <ul className="list-disc pl-3.5 space-y-0.5 text-[9px] text-slate-500 leading-tight">
-            <li>Accounts are due on demand.</li>
-            <li>
-              A <strong>50% booking fee</strong> is required, with the remaining
-              balance payable before boarding.
-            </li>
-            <li>
-              Accepted payments: Cash, Cheque, Bank Transfer, M-PESA.
-            </li>
-          </ul>
+          {quotation.terms ? (
+            <p className="text-[9px] text-slate-500 leading-tight whitespace-pre-line">
+              {quotation.terms}
+            </p>
+          ) : (
+            <ul className="list-disc pl-3.5 space-y-0.5 text-[9px] text-slate-500 leading-tight">
+              <li>This quotation is valid for 14 days from the date of issue.</li>
+              <li>Prices are subject to change without prior notice.</li>
+              <li>Payment terms: 50% advance, 50% upon completion.</li>
+              <li>Accepted payments: Cash, Cheque, Bank Transfer, M-PESA.</li>
+            </ul>
+          )}
         </div>
 
         {/* Stamp & Authorized Signatory Row */}

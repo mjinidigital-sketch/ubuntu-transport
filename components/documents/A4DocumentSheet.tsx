@@ -454,18 +454,24 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
               <span className="text-[9px] font-bold uppercase tracking-wider block mb-1" style={{ color: primaryColor }}>
                 Terms & Conditions:
               </span>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px]" style={{ color: secondaryColor }}>
-                <ul className="list-disc list-inside space-y-0.5">
-                  <li>Accounts are due on demand.</li>
-                  <li>A 50% deposit (booking fee) is required to confirm and secure the service booking.</li>
-                  <li>The remaining balance must be settled before commencement or boarding.</li>
-              </ul>
-                <ul className="list-disc list-inside space-y-0.5">
-                  <li>Accepted payments: Cash, Bank Transfer, Mobile Money (M-PESA).</li>
-                  <li>KCB Bank Account: 1350132330 (Tai Ubuntu Logistics Ltd)</li>
-                  <li>M-PESA PAYBILL: 522533, ACCOUNT: 8077526</li>
-                </ul>
-              </div>
+              {document.terms ? (
+                <p className="text-[9px] whitespace-pre-line" style={{ color: secondaryColor }}>
+                  {document.terms}
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px]" style={{ color: secondaryColor }}>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    <li>This quotation is valid for 14 days from the date of issue.</li>
+                    <li>Prices are subject to change without prior notice.</li>
+                    <li>Payment terms: 50% advance, 50% upon completion.</li>
+                  </ul>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    <li>Accepted payments: Cash, Bank Transfer, Mobile Money (M-PESA).</li>
+                    <li>KCB Bank Account: 1350132330 (Tai Ubuntu Logistics Ltd)</li>
+                    <li>M-PESA PAYBILL: 522533, ACCOUNT: 8077526</li>
+                  </ul>
+                </div>
+              )}
             </div>
           )}
 
@@ -681,18 +687,24 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
               <span className="text-[9px] font-bold uppercase tracking-wider block mb-1" style={{ color: primaryColor }}>
                 Terms & Conditions:
               </span>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px]" style={{ color: secondaryColor }}>
-                <ul className="list-disc list-inside space-y-0.5">
-                  <li>Accounts are due on demand.</li>
-                  <li>A 50% deposit (booking fee) is required to confirm and secure the service booking.</li>
-                  <li>The remaining balance must be settled before commencement or boarding.</li>
-                   </ul>
-                <ul className="list-disc list-inside space-y-0.5">
-                  <li>Accepted payments: Cash, Bank Transfer, Mobile Money (M-PESA).</li>
-                  <li>KCB Bank Account: 1350132330 (Tai Ubuntu Logistics Ltd)</li>
-                  <li>M-PESA PAYBILL: 522533, ACCOUNT: 8077526</li>
-                </ul>
-              </div>
+              {document.terms ? (
+                <p className="text-[9px] whitespace-pre-line" style={{ color: secondaryColor }}>
+                  {document.terms}
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px]" style={{ color: secondaryColor }}>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    <li>This quotation is valid for 14 days from the date of issue.</li>
+                    <li>Prices are subject to change without prior notice.</li>
+                    <li>Payment terms: 50% advance, 50% upon completion.</li>
+                  </ul>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    <li>Accepted payments: Cash, Bank Transfer, Mobile Money (M-PESA).</li>
+                    <li>KCB Bank Account: 1350132330 (Tai Ubuntu Logistics Ltd)</li>
+                    <li>M-PESA PAYBILL: 522533, ACCOUNT: 8077526</li>
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -893,18 +905,24 @@ export const A4DocumentSheet = React.forwardRef<HTMLDivElement, A4DocumentSheetP
               <span className="text-[9px] font-bold uppercase tracking-wider block mb-1" style={{ color: primaryColor }}>
                 Terms & Conditions:
               </span>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px]" style={{ color: secondaryColor }}>
-                <ul className="list-disc list-inside space-y-0.5">
-                  <li>Accounts are due on demand.</li>
-                  <li>A 50% deposit (booking fee) is required to confirm and secure the service booking.</li>
-                  <li>The remaining balance must be settled before commencement or boarding.</li>
-                 </ul>
-                <ul className="list-disc list-inside space-y-0.5">
-                  <li>Accepted payments: Cash, Bank Transfer, Mobile Money (M-PESA).</li>
-                  <li>KCB Bank Account: 1350132330 (Tai Ubuntu Logistics Ltd)</li>
-                  <li>M-PESA PAYBILL: 522533, ACCOUNT: 8077526</li>
-                </ul>
-              </div>
+              {document.terms ? (
+                <p className="text-[9px] whitespace-pre-line" style={{ color: secondaryColor }}>
+                  {document.terms}
+                </p>
+              ) : (
+                <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px]" style={{ color: secondaryColor }}>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    <li>This quotation is valid for 14 days from the date of issue.</li>
+                    <li>Prices are subject to change without prior notice.</li>
+                    <li>Payment terms: 50% advance, 50% upon completion.</li>
+                  </ul>
+                  <ul className="list-disc list-inside space-y-0.5">
+                    <li>Accepted payments: Cash, Bank Transfer, Mobile Money (M-PESA).</li>
+                    <li>KCB Bank Account: 1350132330 (Tai Ubuntu Logistics Ltd)</li>
+                    <li>M-PESA PAYBILL: 522533, ACCOUNT: 8077526</li>
+                  </ul>
+                </div>
+              )}
             </div>
           )}
         </div>
