@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Send, X, MessageCircle, Minimize2, Maximize2, Check, CheckCheck, Smile, MoreVertical, PhoneCall, MessageSquare, Mail, Globe, Lock } from "lucide-react";
+import { Send, X, MessageCircle, Minimize2, Maximize2, Check, CheckCheck, Smile, MoreVertical, PhoneCall, MessageSquare, Mail, Globe, Lock, Phone, MessageCircle as MessageCircleIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -69,6 +69,33 @@ const CONTACT_OPTIONS = [
     description: "support@example.com",
     action: "mailto:support@example.com",
     color: "from-purple-500 to-purple-600",
+  },
+];
+
+const FLOATING_BUTTONS = [
+  {
+    id: "whatsapp",
+    icon: MessageSquare,
+    label: "WhatsApp Us",
+    action: "https://wa.me/15551234567",
+    color: "bg-green-500 hover:bg-green-600",
+    position: "bottom-6 right-6",
+  },
+  {
+    id: "call",
+    icon: Phone,
+    label: "Call Us",
+    action: "tel:+15551234567",
+    color: "bg-blue-500 hover:bg-blue-600",
+    position: "bottom-6 right-20",
+  },
+  {
+    id: "chat",
+    icon: MessageCircleIcon,
+    label: "Chat with Us",
+    action: null,
+    color: "bg-primary hover:bg-primary/90",
+    position: "bottom-6 right-6 mt-16",
   },
 ];
 
@@ -170,18 +197,49 @@ export function FloatingChatWidget() {
 
   if (!isOpen) {
     return (
-      <button
-        onClick={toggleChat}
-        className="fixed bottom-6 right-6 mt-16 z-50 bg-primary hover:bg-primary/90 text-primary-foreground p-4 rounded-full shadow-lg transition-all hover:scale-105 group"
-      >
-        <div className="relative">
-          <MessageCircle className="w-6 h-6" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-primary animate-pulse"></span>
-          <span className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
-            Chat with us
-          </span>
-        </div>
-      </button>
+      <>
+        {/* WhatsApp Button */}
+        <a
+          href="https://wa.me/15551234567"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-36 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition-all hover:scale-105 group"
+        >
+          <div className="relative">
+            <MessageSquare className="w-6 h-6" />
+            <span className="absolute right-12 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+              WhatsApp Us
+            </span>
+          </div>
+        </a>
+
+        {/* Call Button */}
+        <a
+          href="tel:+15551234567"
+          className="fixed bottom-20 right-6 z-50 bg-blue-500 hover:bg-blue-600 text-white p-4 rounded-full shadow-lg transition-all hover:scale-105 group"
+        >
+          <div className="relative">
+            <Phone className="w-6 h-6" />
+            <span className="absolute right-12 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+              Call Us
+            </span>
+          </div>
+        </a>
+
+        {/* Chat Button */}
+        <button
+          onClick={toggleChat}
+          className="fixed bottom-6 right-6 z-50 bg-primary hover:bg-primary/90 text-primary-foreground p-4 rounded-full shadow-lg transition-all hover:scale-105 group"
+        >
+          <div className="relative">
+            <MessageCircle className="w-6 h-6" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-primary animate-pulse"></span>
+            <span className="absolute right-12 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+              Chat with Us
+            </span>
+          </div>
+        </button>
+      </>
     );
   }
 
