@@ -142,8 +142,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5! cursor-pointer"
               render={<a href="#" />}
             >
-              <CommandIcon className="size-5!" />
-              <span className="text-base font-semibold">Ubuntu Admin</span>
+              <CommandIcon className="size-5! text-secondary" />
+              <span className="text-base font-black text-primary">Ubuntu Admin</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
