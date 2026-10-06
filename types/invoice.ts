@@ -22,7 +22,7 @@ export interface InvoiceData {
   subtotal: number;
   total: number;
   notes?: string;
-  status?: string;  
+  status?: string;
   numberOfDays?: number;
   createdAt?: string | Date;
   updatedAt?: string | Date;
