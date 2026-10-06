@@ -714,34 +714,39 @@ const schema = defineSchema({
         active: v.boolean(),
     }).index("by_user", ["userId"])
     .index("by_active", ["active"]),
-    // Quotations (matching ubuntu-invoices-main structure)
+    // Quotations (matching both new and legacy structures)
     quotations: defineTable({
         // Unique quotation number
         quotationNumber: v.string(),
         // Date
-        date: v.string(), // YYYY-MM-DD
-        // Valid until
-        dueDate: v.optional(v.string()), // YYYY-MM-DD
+        date: v.optional(v.string()), // YYYY-MM-DD
+        quotationDate: v.optional(v.number()),
+        // Valid until / Due date
+        dueDate: v.optional(v.union(v.string(), v.number())),
+        validUntil: v.optional(v.number()),
         // From details
-        fromName: v.string(),
-        fromEmail: v.string(),
+        fromName: v.optional(v.string()),
+        fromEmail: v.optional(v.string()),
         // To details
-        toName: v.string(),
-        toEmail: v.string(),
-        // Line items (matching reference structure)
-        items: v.array(v.object({
-            id: v.string(),
-            date: v.string(), // YYYY-MM-DD
-            pickupPaid: v.string(),
-            dropoffReturnTrip: v.string(),
-            amount: v.union(v.number(), v.string()),
-            numberOfDays: v.union(v.number(), v.string()),
-            status: v.string(),
-        })),
-        // Total
-        total: v.number(),
+        toName: v.optional(v.string()),
+        toEmail: v.optional(v.string()),
+        clientId: v.optional(v.union(v.id("clients"), v.string())),
+        // Line items
+        items: v.array(v.any()),
+        // Total & financials
+        taxRate: v.optional(v.union(v.number(), v.string())),
+        taxAmount: v.optional(v.union(v.number(), v.string())),
+        discountAmount: v.optional(v.string()),
+        subtotal: v.optional(v.union(v.number(), v.string())),
+        total: v.union(v.number(), v.string()),
         // Notes
         notes: v.optional(v.string()),
+        terms: v.optional(v.string()),
+        convertedToInvoiceId: v.optional(v.any()),
+        stampUrl: v.optional(v.string()),
+        signatureUrl: v.optional(v.string()),
+        signatoryName: v.optional(v.string()),
+        signatoryTitle: v.optional(v.string()),
         // Status
         status: v.union(
             v.literal("draft"),
@@ -756,39 +761,45 @@ const schema = defineSchema({
         createdAt: v.optional(v.number()),
         updatedAt: v.optional(v.number()),
     }).index("by_number", ["quotationNumber"])
-    .index("by_status", ["status"])
-    .index("by_date", ["date"]),
-    // Invoices (matching ubuntu-invoices-main structure)
+    .index("by_status", ["status"]),
+
+    // Invoices (matching both new and legacy structures)
     invoices: defineTable({
         // Unique invoice number
         invoiceNumber: v.string(),
         // Date
-        date: v.string(), // YYYY-MM-DD
+        date: v.optional(v.string()), // YYYY-MM-DD
+        invoiceDate: v.optional(v.number()),
         // Due date
-        dueDate: v.optional(v.string()), // YYYY-MM-DD
+        dueDate: v.optional(v.union(v.string(), v.number())),
         // From details
-        fromName: v.string(),
-        fromEmail: v.string(),
+        fromName: v.optional(v.string()),
+        fromEmail: v.optional(v.string()),
         // To details
-        toName: v.string(),
-        toEmail: v.string(),
-        // Line items (matching reference structure)
-        items: v.array(v.object({
-            id: v.string(),
-            description: v.string(),
-            quantity: v.union(v.number(), v.string()),
-            rate: v.union(v.number(), v.string()),
-            amount: v.number(),
-            numberOfDays: v.union(v.number(), v.string()),
-        })),
+        toName: v.optional(v.string()),
+        toEmail: v.optional(v.string()),
+        clientId: v.optional(v.union(v.id("clients"), v.string())),
+        quotationId: v.optional(v.union(v.id("quotations"), v.string())),
+        // Line items
+        items: v.array(v.any()),
         // Tax
-        taxRate: v.union(v.number(), v.string()),
-        taxAmount: v.number(),
+        taxRate: v.optional(v.union(v.number(), v.string())),
+        taxAmount: v.optional(v.union(v.number(), v.string())),
+        discountAmount: v.optional(v.string()),
         // Subtotal and total
-        subtotal: v.number(),
-        total: v.number(),
+        subtotal: v.optional(v.union(v.number(), v.string())),
+        total: v.union(v.number(), v.string()),
+        // Payment tracking
+        paidAmount: v.optional(v.string()),
+        balanceDue: v.optional(v.string()),
         // Notes
         notes: v.optional(v.string()),
+        terms: v.optional(v.string()),
+        templateId: v.optional(v.any()),
+        stampUrl: v.optional(v.string()),
+        signatureUrl: v.optional(v.string()),
+        signatoryName: v.optional(v.string()),
+        signatoryTitle: v.optional(v.string()),
         // Status
         status: v.union(
             v.literal("draft"),
@@ -804,8 +815,7 @@ const schema = defineSchema({
         createdAt: v.optional(v.number()),
         updatedAt: v.optional(v.number()),
     }).index("by_number", ["invoiceNumber"])
-    .index("by_status", ["status"])
-    .index("by_date", ["date"]),
+    .index("by_status", ["status"]),
     // Receipts
     receipts: defineTable({
         // Unique receipt number
