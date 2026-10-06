@@ -22,7 +22,7 @@ export type InvoiceRow = {
     quotationId?: string;
     invoiceDate: number;
     dueDate?: number;
-    status: "draft" | "sent" | "paid" | "overdue" | "cancelled";
+    status: "draft" | "sent" | "paid" | "partially_paid" | "overdue" | "cancelled";
     items: any[];
     subtotal: string;
     taxRate?: number;
@@ -31,6 +31,9 @@ export type InvoiceRow = {
     total: string;
     paidAmount?: string;
     balanceDue?: string;
+    paymentType?: "MPESA" | "BANK" | "CASH" | "OTHER";
+    paymentReference?: string;
+    paymentDate?: string;
     notes?: string;
     terms?: string;
     templateId?: string;
@@ -43,6 +46,7 @@ const STATUS_COLORS: Record<string, string> = {
     draft: "bg-gray-100 text-gray-700",
     sent: "bg-blue-100 text-blue-700",
     paid: "bg-green-100 text-green-700",
+    partially_paid: "bg-yellow-100 text-yellow-700",
     overdue: "bg-red-100 text-red-700",
     cancelled: "bg-orange-100 text-orange-700",
 };

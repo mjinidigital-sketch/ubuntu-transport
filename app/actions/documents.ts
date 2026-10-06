@@ -27,6 +27,7 @@ export async function createServiceAction(values: any) {
     try {
         await fetchMutation(api.services.createService, values, { token });
         revalidatePath("/admin/services");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to create service:", error);
@@ -39,6 +40,7 @@ export async function updateServiceAction(id: string, values: any) {
     try {
         await fetchMutation(api.services.updateService, { id: id as any, ...values }, { token });
         revalidatePath("/admin/services");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to update service:", error);
@@ -51,6 +53,7 @@ export async function deleteServiceAction(id: string) {
     try {
         await fetchMutation(api.services.deleteService, { id: id as any }, { token });
         revalidatePath("/admin/services");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to delete service:", error);
@@ -75,6 +78,7 @@ export async function createClientAction(values: any) {
     try {
         await fetchMutation(api.clients.createClient, values, { token });
         revalidatePath("/admin/clients");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to create client:", error);
@@ -87,6 +91,7 @@ export async function updateClientAction(id: string, values: any) {
     try {
         await fetchMutation(api.clients.updateClient, { id: id as any, ...values }, { token });
         revalidatePath("/admin/clients");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to update client:", error);
@@ -99,6 +104,7 @@ export async function deleteClientAction(id: string) {
     try {
         await fetchMutation(api.clients.deleteClient, { id: id as any }, { token });
         revalidatePath("/admin/clients");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to delete client:", error);
@@ -134,6 +140,7 @@ export async function createQuotationAction(values: any) {
     try {
         await fetchMutation(api.quotations.createQuotation, values, { token });
         revalidatePath("/admin/quotations");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to create quotation:", error);
@@ -146,6 +153,7 @@ export async function updateQuotationAction(id: string, values: any) {
     try {
         await fetchMutation(api.quotations.updateQuotation, { id: id as any, ...values }, { token });
         revalidatePath("/admin/quotations");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to update quotation:", error);
@@ -158,6 +166,7 @@ export async function deleteQuotationAction(id: string) {
     try {
         await fetchMutation(api.quotations.deleteQuotation, { id: id as any }, { token });
         revalidatePath("/admin/quotations");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to delete quotation:", error);
@@ -205,6 +214,7 @@ export async function createInvoiceAction(values: any) {
     try {
         await fetchMutation(api.invoices.createInvoice, values, { token });
         revalidatePath("/admin/invoices");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to create invoice:", error);
@@ -217,6 +227,7 @@ export async function updateInvoiceAction(id: string, values: any) {
     try {
         await fetchMutation(api.invoices.updateInvoice, { id: id as any, ...values }, { token });
         revalidatePath("/admin/invoices");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to update invoice:", error);
@@ -229,6 +240,7 @@ export async function deleteInvoiceAction(id: string) {
     try {
         await fetchMutation(api.invoices.deleteInvoice, { id: id as any }, { token });
         revalidatePath("/admin/invoices");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to delete invoice:", error);
@@ -265,6 +277,7 @@ export async function createReceiptAction(values: any) {
         await fetchMutation(api.receipts.createReceipt, values, { token });
         revalidatePath("/admin/receipts");
         revalidatePath("/admin/invoices");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to create receipt:", error);
@@ -277,6 +290,7 @@ export async function updateReceiptAction(id: string, values: any) {
     try {
         await fetchMutation(api.receipts.updateReceipt, { id: id as any, ...values }, { token });
         revalidatePath("/admin/receipts");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to update receipt:", error);
@@ -289,6 +303,7 @@ export async function deleteReceiptAction(id: string) {
     try {
         await fetchMutation(api.receipts.deleteReceipt, { id: id as any }, { token });
         revalidatePath("/admin/receipts");
+        revalidatePath("/"); // Revalidate homepage
         return { success: true };
     } catch (error) {
         console.error("Failed to delete receipt:", error);

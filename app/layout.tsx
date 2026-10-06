@@ -61,6 +61,8 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+export const revalidate = 3600; // Revalidate every hour
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>

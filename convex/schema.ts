@@ -792,6 +792,9 @@ const schema = defineSchema({
         // Payment tracking
         paidAmount: v.optional(v.string()),
         balanceDue: v.optional(v.string()),
+        paymentType: v.optional(v.union(v.literal("MPESA"), v.literal("BANK"), v.literal("CASH"), v.literal("OTHER"))),
+        paymentReference: v.optional(v.string()),
+        paymentDate: v.optional(v.string()),
         // Notes
         notes: v.optional(v.string()),
         terms: v.optional(v.string()),
@@ -835,6 +838,7 @@ const schema = defineSchema({
             v.literal("credit_card"),
             v.literal("debit_card"),
             v.literal("check"),
+            v.literal("MPESA"),
             v.literal("other")
         ),
         // Payment reference

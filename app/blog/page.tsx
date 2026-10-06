@@ -3,7 +3,7 @@ import { api } from "@/convex/_generated/api";
 import { BlockRenderer } from "@/components/BlockRenderer";
 import { notFound } from "next/navigation";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
 
 export default async function BlogPage() {
   // Resolve matching blog page from Convex database

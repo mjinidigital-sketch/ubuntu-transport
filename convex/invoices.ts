@@ -75,6 +75,11 @@ export const updateInvoice = mutation({
       v.literal("cancelled")
     )),
     numberOfDays: v.optional(v.number()),
+    paidAmount: v.optional(v.string()),
+    balanceDue: v.optional(v.string()),
+    paymentType: v.optional(v.union(v.literal("MPESA"), v.literal("BANK"), v.literal("CASH"), v.literal("OTHER"))),
+    paymentReference: v.optional(v.string()),
+    paymentDate: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...updateData } = args;

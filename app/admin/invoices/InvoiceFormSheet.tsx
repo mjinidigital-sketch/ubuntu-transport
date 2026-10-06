@@ -76,13 +76,18 @@ export function InvoiceFormSheet({
     quotationId: "" as string,
     invoiceDate: new Date().toISOString().split('T')[0],
     dueDate: "",
-    status: "draft" as "draft" | "sent" | "paid" | "overdue" | "cancelled",
+    status: "draft" as "draft" | "sent" | "paid" | "partially_paid" | "overdue" | "cancelled",
     items: [] as LineItem[],
     taxRate: 0,
     discountAmount: "0",
     notes: "",
     terms: "",
     templateId: "" as string,
+    paidAmount: "" as string,
+    balanceDue: "" as string,
+    paymentType: "" as "MPESA" | "BANK" | "CASH" | "OTHER" | "",
+    paymentReference: "" as string,
+    paymentDate: "" as string,
   });
 
   useEffect(() => {
@@ -114,6 +119,11 @@ export function InvoiceFormSheet({
         notes: invoice.notes ?? "",
         terms: invoice.terms ?? "",
         templateId: invoice.templateId ?? "",
+        paidAmount: invoice.paidAmount ?? "",
+        balanceDue: invoice.balanceDue ?? "",
+        paymentType: (invoice.paymentType as any) ?? "",
+        paymentReference: invoice.paymentReference ?? "",
+        paymentDate: invoice.paymentDate ?? "",
       });
     } else {
       setFormData({
@@ -128,6 +138,11 @@ export function InvoiceFormSheet({
         notes: "",
         terms: "",
         templateId: "",
+        paidAmount: "",
+        balanceDue: "",
+        paymentType: "",
+        paymentReference: "",
+        paymentDate: "",
       });
     }
     setCurrentStep(0);
@@ -166,6 +181,20 @@ export function InvoiceFormSheet({
     setIsLoading(true);
 
     try {
+      // Validation for partially paid
+      if (formData.status === "partially_paid") {
+        if (!formData.paidAmount || parseFloat(formData.paidAmount) <= 0) {
+          toast.error("Please enter the amount paid for partially paid invoices");
+          setIsLoading(false);
+          return;
+        }
+        if (!formData.paymentType) {
+          toast.error("Please select the payment type for partially paid invoices");
+          setIsLoading(false);
+          return;
+        }
+      }
+
       const totals = calculateTotals();
       const submitData = {
         ...formData,
@@ -179,6 +208,20 @@ export function InvoiceFormSheet({
           itemDate: item.itemDate ? new Date(item.itemDate).getTime() : undefined,
         })),
         ...totals,
+        // Only include payment fields if status is paid or partially_paid
+        paidAmount: formData.status === "paid"
+          ? totals.total // Fully paid - use total amount
+          : formData.status === "partially_paid"
+          ? formData.paidAmount || "0" // Partially paid - use paidAmount
+          : undefined,
+        balanceDue: formData.status === "paid"
+          ? "0" // Fully paid - no balance
+          : formData.status === "partially_paid"
+          ? formData.balanceDue || totals.total // Partially paid - use balanceDue or remaining
+          : undefined,
+        paymentType: (formData.status === "paid" || formData.status === "partially_paid") ? formData.paymentType : undefined,
+        paymentReference: (formData.status === "paid" || formData.status === "partially_paid") ? formData.paymentReference : undefined,
+        paymentDate: (formData.status === "paid" || formData.status === "partially_paid") ? formData.paymentDate : undefined,
       };
 
       if (isCreating) {
@@ -310,12 +353,109 @@ export function InvoiceFormSheet({
                         <SelectItem value="draft">Draft</SelectItem>
                         <SelectItem value="sent">Sent</SelectItem>
                         <SelectItem value="paid">Paid</SelectItem>
+                        <SelectItem value="partially_paid">Partially Paid</SelectItem>
                         <SelectItem value="overdue">Overdue</SelectItem>
                         <SelectItem value="cancelled">Cancelled</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
+
+                {/* Payment Fields - Show when status is paid or partially_paid */}
+                {(formData.status === "paid" || formData.status === "partially_paid") && (
+                  <div className="space-y-4 p-4 bg-primary/5 rounded-lg border-2 border-primary/20">
+                    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      <span className="text-lg">💰</span>
+                      Payment Details
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="paymentType" className="text-xs font-medium">
+                          Payment Type {formData.status === "partially_paid" && "*"}
+                        </Label>
+                        <Select
+                          value={formData.paymentType}
+                          onValueChange={(value: any) =>
+                            setFormData({ ...formData, paymentType: value })
+                          }
+                        >
+                          <SelectTrigger className="h-9 text-sm">
+                            <SelectValue placeholder="Select payment type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="MPESA">MPESA</SelectItem>
+                            <SelectItem value="BANK">Bank Transfer</SelectItem>
+                            <SelectItem value="CASH">Cash</SelectItem>
+                            <SelectItem value="OTHER">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="paymentDate" className="text-xs font-medium">Payment Date</Label>
+                        <Input
+                          id="paymentDate"
+                          type="date"
+                          value={formData.paymentDate}
+                          onChange={(e) => setFormData({ ...formData, paymentDate: e.target.value })}
+                          className="h-9 text-sm"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="paidAmount" className="text-xs font-medium">
+                          {formData.status === "partially_paid" ? "Amount Paid *" : "Amount Paid"}
+                        </Label>
+                        <Input
+                          id="paidAmount"
+                          type="number"
+                          step="0.01"
+                          value={formData.paidAmount}
+                          onChange={(e) => {
+                            const paidAmount = e.target.value;
+                            // Auto-calculate balance due for partially paid
+                            let balanceDue = formData.balanceDue;
+                            if (formData.status === "partially_paid" && paidAmount) {
+                              const total = parseFloat(totals.total) || 0;
+                              const paid = parseFloat(paidAmount) || 0;
+                              balanceDue = Math.max(0, total - paid).toFixed(2);
+                            }
+                            setFormData({ ...formData, paidAmount, balanceDue });
+                          }}
+                          placeholder="0.00"
+                          className="h-9 text-sm"
+                          required={formData.status === "partially_paid"}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="balanceDue" className="text-xs font-medium">Balance Due</Label>
+                        <Input
+                          id="balanceDue"
+                          type="number"
+                          step="0.01"
+                          value={formData.balanceDue}
+                          onChange={(e) => setFormData({ ...formData, balanceDue: e.target.value })}
+                          placeholder="0.00"
+                          className="h-9 text-sm"
+                          readOnly={formData.status === "partially_paid"}
+                        />
+                        {formData.status === "partially_paid" && (
+                          <p className="text-xs text-muted-foreground">Auto-calculated from total - amount paid</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="paymentReference" className="text-xs font-medium">Payment Reference (Transaction ID)</Label>
+                      <Input
+                        id="paymentReference"
+                        value={formData.paymentReference}
+                        onChange={(e) => setFormData({ ...formData, paymentReference: e.target.value })}
+                        placeholder="e.g., MPESA transaction ID or Bank reference"
+                        className="h-9 text-sm"
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label htmlFor="clientId" className="text-xs font-medium">Client *</Label>
